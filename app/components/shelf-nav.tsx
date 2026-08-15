@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { BOOK_STATUSES, STATUS_LABELS, type BookStatus } from "@/lib/types";
+import type { BookCounts } from "@/lib/books";
 import { cn } from "./ui";
 
 type Props = {
   basePath: string;
   current?: BookStatus | "all";
+  counts?: BookCounts;
 };
 
-export function ShelfNav({ basePath, current = "all" }: Props) {
+export function ShelfNav({ basePath, current = "all", counts }: Props) {
   const items = [
     { href: basePath || "/", label: "All", key: "all" as const },
     ...BOOK_STATUSES.map((status) => ({
@@ -19,20 +21,33 @@ export function ShelfNav({ basePath, current = "all" }: Props) {
 
   return (
     <nav className="mb-6 flex flex-wrap gap-2 text-sm">
-      {items.map((item) => (
-        <Link
-          key={item.key}
-          href={item.href}
-          className={cn(
-            "rounded-full px-3 py-1.5 font-medium transition",
-            item.key === current
-              ? "bg-teal-700 text-white"
-              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900",
-          )}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {items.map((item) => {
+        const n = counts?.[item.key];
+        return (
+          <Link
+            key={item.key}
+            href={item.href}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium transition",
+              item.key === current
+                ? "bg-teal-700 text-white"
+                : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900",
+            )}
+          >
+            {item.label}
+            {n != null ? (
+              <span
+                className={cn(
+                  "rounded-full px-1.5 py-0.5 text-xs leading-none",
+                  item.key === current ? "bg-teal-600 text-teal-100" : "bg-zinc-100 text-zinc-500",
+                )}
+              >
+                {n}
+              </span>
+            ) : null}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

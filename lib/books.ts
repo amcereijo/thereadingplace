@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "./db";
 import { books } from "./db/schema";
 import {
@@ -60,12 +60,12 @@ export async function listBooks(ownerId: string, status?: BookStatus) {
         .select()
         .from(books)
         .where(and(eq(books.ownerId, ownerId), eq(books.status, status)))
-        .orderBy(desc(books.updatedAt))
+        .orderBy(desc(books.dateAdded))
     : await db
         .select()
         .from(books)
         .where(eq(books.ownerId, ownerId))
-        .orderBy(desc(books.updatedAt));
+        .orderBy(desc(books.dateAdded));
   return rows.map(toBook);
 }
 
@@ -139,4 +139,31 @@ export async function updateBook(
 
 export async function deleteBook(id: string) {
   await db.delete(books).where(eq(books.id, id));
+}
+
+export type BookCounts = { all: number } & Record<BookStatus, number>;
+
+export async function countBooksByStatus(ownerId: string): Promise<BookCounts> {
+  const rows = await db
+    .select({ status: books.status, n: count() })
+    .from(books)
+    .where(eq(books.ownerId, ownerId))
+    .groupBy(books.status);
+
+  const counts: BookCounts = {
+    all: 0,
+    "to-read": 0,
+    reading: 0,
+    read: 0,
+    abandoned: 0,
+  };
+
+  for (const row of rows) {
+    if (isBookStatus(row.status)) {
+      counts[row.status] = row.n;
+      counts.all += row.n;
+    }
+  }
+
+  return counts;
 }

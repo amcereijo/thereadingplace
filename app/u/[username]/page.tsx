@@ -3,7 +3,7 @@ import { BookList } from "@/app/components/book-list";
 import { ShelfNav } from "@/app/components/shelf-nav";
 import { Card, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
-import { listBooks } from "@/lib/books";
+import { countBooksByStatus, listBooks } from "@/lib/books";
 import { canReadShelf } from "@/lib/friendships";
 import { isBookStatus } from "@/lib/types";
 import { getUserByUsername } from "@/lib/users";
@@ -32,13 +32,16 @@ export default async function FriendShelfPage({
 
   const query = await searchParams;
   const status = query.status && isBookStatus(query.status) ? query.status : undefined;
-  const books = await listBooks(owner.id, status);
+  const [books, counts] = await Promise.all([
+    listBooks(owner.id, status),
+    countBooksByStatus(owner.id),
+  ]);
 
   return (
     <div>
       <PageTitle>@{owner.username}&apos;s shelf</PageTitle>
       <div className="mt-6">
-        <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} />
+        <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} counts={counts} />
       </div>
       <BookList books={books} />
     </div>
