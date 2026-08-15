@@ -25,3 +25,15 @@ export function readNote(formData: FormData) {
   const value = String(formData.get("note") ?? "").trim();
   return value || null;
 }
+
+export function readMetadata(formData: FormData): Record<string, unknown> {
+  const raw = String(formData.get("metadata") ?? "").trim();
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch {}
+  return {};
+}

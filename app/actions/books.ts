@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAppUser } from "@/lib/auth";
 import { createBook, deleteBook, getBook, updateBook } from "@/lib/books";
-import { readFormats, readNote, readOptionalDate, readStatus, readTitle } from "@/lib/forms";
+import { readFormats, readMetadata, readNote, readOptionalDate, readStatus, readTitle } from "@/lib/forms";
 
 function revalidateShelves() {
   revalidatePath("/");
@@ -63,7 +63,9 @@ export async function updateBookAction(
     startedAt: readOptionalDate(formData, "startedAt"),
     finishedAt: readOptionalDate(formData, "finishedAt"),
     abandonedAt: readOptionalDate(formData, "abandonedAt"),
+    dateAdded: readOptionalDate(formData, "dateAdded"),
     note: readNote(formData),
+    metadata: readMetadata(formData),
   });
 
   revalidateShelves();
