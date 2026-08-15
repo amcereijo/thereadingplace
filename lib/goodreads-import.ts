@@ -20,14 +20,14 @@ export function mapGoodreadsToBookStatus(
     "currently-reading": "reading",
     "to-read": "to-read",
   };
-  
+
   const status = shelfMap[exclusiveShelf.toLowerCase()];
   return status && isBookStatus(status) ? status : "to-read";
 }
 
 export function mapGoodreadsToBookFormat(binding: string): BookFormat {
   const bindingLower = binding.toLowerCase();
-  
+
   if (bindingLower.includes("kindle") || bindingLower.includes("ebook")) {
     return "ebook";
   }
@@ -40,7 +40,7 @@ export function mapGoodreadsToBookFormat(binding: string): BookFormat {
   if (bindingLower.includes("paperback")) {
     return "paperback";
   }
-  
+
   return "paperback";
 }
 
@@ -49,13 +49,13 @@ export async function findDuplicateByIsbn(
   ownerId: string
 ): Promise<boolean> {
   if (!isbn) return false;
-  
+
   const existing = await db
     .select({ id: books.id })
     .from(books)
     .where(and(eq(books.ownerId, ownerId), eq(books.title, isbn)))
     .limit(1);
-  
+
   return existing.length > 0;
 }
 
@@ -74,7 +74,7 @@ export async function findDuplicateByTitleAndAuthor(
       )
     )
     .limit(1);
-  
+
   return existing.length > 0;
 }
 
@@ -96,7 +96,7 @@ export async function importBooks(
       const isDuplicateByIsbn = book.isbn
         ? await findDuplicateByIsbn(book.isbn, ownerId)
         : false;
-      
+
       if (isDuplicateByIsbn) {
         progress.skipped++;
         progress.processed++;
@@ -109,7 +109,7 @@ export async function importBooks(
         book.author,
         ownerId
       );
-      
+
       if (isDuplicateByTitle) {
         progress.skipped++;
         progress.processed++;
@@ -119,10 +119,10 @@ export async function importBooks(
 
       const status = mapGoodreadsToBookStatus(book.exclusiveShelf);
       const format = mapGoodreadsToBookFormat(book.binding);
-      
+
       const note = [
-        book.myReview ? `Review: ${book.myReview}` : "",
-        book.privateNotes ? `Notes: ${book.privateNotes}` : "",
+        book.myReview ? `${book.myReview}` : "",
+        book.privateNotes ? `${book.privateNotes}` : "",
       ]
         .filter(Boolean)
         .join("\n");
