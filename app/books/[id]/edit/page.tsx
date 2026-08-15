@@ -3,6 +3,7 @@ import { EditBookForm } from "@/app/components/edit-book-form";
 import { PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { getBook } from "@/lib/books";
+import { BackButton } from "@/app/components/back-button";
 
 export default async function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireAppUser();
@@ -12,10 +13,11 @@ export default async function EditBookPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <PageTitle>Edit book</PageTitle>
-      <div className="mt-6">
-        <EditBookForm book={book} />
+      <div className="mb-6 flex items-center gap-3">
+        <BackButton />
+        <PageTitle>Edit book</PageTitle>
       </div>
+      <EditBookForm book={book} />
     </div>
   );
 }
