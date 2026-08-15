@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { BOOK_FORMATS, BOOK_STATUSES, STATUS_LABELS, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
-import { Button, ErrorMessage, Input, Label, Select, TextArea } from "./ui";
+import { Button, ErrorMessage, Input, Label, LinkButton, Select, TextArea } from "./ui";
 
 type Props = {
   action: React.ComponentProps<"form">["action"];
   book?: BookRecord;
   error?: string | null;
   submitLabel: string;
+  cancelHref?: string;
 };
 
 const defaultBook: BookRecord = {
@@ -27,7 +28,7 @@ const defaultBook: BookRecord = {
   updatedAt: "",
 };
 
-export function BookForm({ action, book, error, submitLabel }: Props) {
+export function BookForm({ action, book, error, submitLabel, cancelHref }: Props) {
   const initial = book ?? defaultBook;
   const [title, setTitle] = useState(initial.title);
   const [status, setStatus] = useState<BookStatus>(initial.status);
@@ -114,6 +115,11 @@ export function BookForm({ action, book, error, submitLabel }: Props) {
 
       <div className="flex items-center gap-3">
         <Button type="submit">{submitLabel}</Button>
+        {cancelHref ? (
+          <LinkButton href={cancelHref} variant="secondary">
+            Cancel
+          </LinkButton>
+        ) : null}
         {book ? (
           <Button type="button" variant="secondary" onClick={reset}>
             Discard changes
