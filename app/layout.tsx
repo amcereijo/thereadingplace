@@ -31,29 +31,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
         <ClerkProvider>
-          <header className="flex items-center justify-between gap-4 border-b border-zinc-200 px-6 py-3">
-            <Link href="/" className="font-semibold tracking-tight">
-              The Reading Place
-            </Link>
-            <nav className="flex items-center gap-4 text-sm">
-              <Show when="signed-in">
-                <Link href="/">Shelf</Link>
-                <Link href="/friends">Friends</Link>
-                <UserButton />
-              </Show>
-              <Show when="signed-out">
-                <SignInButton />
-                <SignUpButton />
-              </Show>
-            </nav>
+          <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur">
+            <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4 sm:px-6">
+              <Link
+                href="/"
+                className="text-lg font-bold tracking-tight text-teal-800 hover:text-teal-900"
+              >
+                The Reading Place
+              </Link>
+              <nav className="flex items-center gap-4 text-sm font-medium text-zinc-700">
+                <Show when="signed-in">
+                  <Link href="/" className="hover:text-zinc-900">
+                    Shelf
+                  </Link>
+                  <Link href="/friends" className="hover:text-zinc-900">
+                    Friends
+                  </Link>
+                  <UserButton />
+                </Show>
+                <Show when="signed-out">
+                  <SignInButton mode="modal">
+                    <button className="text-sm font-medium text-zinc-700 hover:text-zinc-900">
+                      Sign in
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800">
+                      Get started
+                    </button>
+                  </SignUpButton>
+                </Show>
+              </nav>
+            </div>
           </header>
-          <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">{children}</main>
+          <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">{children}</main>
         </ClerkProvider>
       </body>
     </html>

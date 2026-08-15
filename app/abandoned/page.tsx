@@ -1,5 +1,6 @@
 import { BookList } from "@/app/components/book-list";
 import { ShelfNav } from "@/app/components/shelf-nav";
+import { PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { listBooks } from "@/lib/books";
 
@@ -8,8 +9,10 @@ export default async function AbandonedPage() {
   const books = await listBooks(user.id, "abandoned");
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Abandoned</h1>
-      <ShelfNav basePath="" current="abandoned" />
+      <PageTitle>Abandoned</PageTitle>
+      <div className="mt-6">
+        <ShelfNav basePath="" current="abandoned" />
+      </div>
       <BookList books={books} editable />
     </div>
   );

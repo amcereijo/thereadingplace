@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { inviteByUsernameAction } from "@/app/actions/friends";
+import { Button, ErrorMessage, Input, SuccessMessage } from "./ui";
 
 export function InviteUsernameForm() {
   const [state, action] = useActionState(inviteByUsernameAction, {
@@ -10,20 +11,18 @@ export function InviteUsernameForm() {
   });
 
   return (
-    <form action={action} className="flex flex-wrap items-end gap-3">
-      <label className="block text-sm font-medium">
-        Username
-        <input
-          className="mt-1 block rounded border border-zinc-300 px-3 py-2 text-sm"
-          name="username"
-          required
-        />
-      </label>
-      <button type="submit" className="rounded bg-zinc-900 px-4 py-2 text-sm text-white">
-        Invite
-      </button>
-      {state?.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
-      {state?.ok ? <p className="text-sm text-green-700">{state.ok}</p> : null}
+    <form action={action} className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="flex-1">
+          <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-zinc-700">
+            Username
+          </label>
+          <Input id="username" name="username" placeholder="@friend" required />
+        </div>
+        <Button type="submit">Invite</Button>
+      </div>
+      <ErrorMessage>{state?.error}</ErrorMessage>
+      <SuccessMessage>{state?.ok}</SuccessMessage>
     </form>
   );
 }

@@ -1,12 +1,16 @@
 import { CreateBookForm } from "@/app/components/create-book-form";
+import { PageSubtitle, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 
 export default async function NewBookPage() {
   await requireAppUser();
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Add a book</h1>
-      <CreateBookForm />
+      <PageTitle>Add a book</PageTitle>
+      <PageSubtitle>Only the title is required. Everything else is optional.</PageSubtitle>
+      <div className="mt-6">
+        <CreateBookForm />
+      </div>
     </div>
   );
 }

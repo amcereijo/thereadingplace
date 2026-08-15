@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { acceptInviteAction, declineInviteAction } from "@/app/actions/friends";
 import { InviteUsernameForm } from "@/app/components/invite-username-form";
 import { MintInviteLink } from "@/app/components/mint-invite-link";
+import { Button, Card, LinkButton, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import {
   listAcceptedFriends,
@@ -18,41 +18,48 @@ export default async function FriendsPage() {
   ]);
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-2xl font-semibold">Friends</h1>
+    <div className="space-y-8">
+      <div>
+        <PageTitle>Friends</PageTitle>
+        <PageSubtitle>Connect with readers you know.</PageSubtitle>
+      </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">Invite by username</h2>
+        <SectionTitle>Invite by username</SectionTitle>
         <InviteUsernameForm />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">New-member link</h2>
-        <p className="text-sm text-zinc-600">One-shot. Only for someone who does not have an account yet.</p>
+        <SectionTitle>New-member link</SectionTitle>
+        <p className="text-sm text-zinc-600">
+          One-shot link. Send it to someone who does not have an account yet.
+        </p>
         <MintInviteLink />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">Incoming requests</h2>
+        <SectionTitle>Incoming requests</SectionTitle>
         {incoming.length === 0 ? (
-          <p className="text-sm text-zinc-600">None.</p>
+          <p className="text-sm text-zinc-500">None.</p>
         ) : (
           <ul className="space-y-2">
             {incoming.map((row) => (
-              <li key={row.id} className="flex items-center gap-3 text-sm">
-                <span>@{row.requesterUsername}</span>
-                <form action={acceptInviteAction}>
-                  <input type="hidden" name="id" value={row.id} />
-                  <button className="underline" type="submit">
-                    Accept
-                  </button>
-                </form>
-                <form action={declineInviteAction}>
-                  <input type="hidden" name="id" value={row.id} />
-                  <button className="underline" type="submit">
-                    Decline
-                  </button>
-                </form>
+              <li key={row.id}>
+                <Card className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                  <span className="font-medium text-zinc-900">@{row.requesterUsername}</span>
+                  <div className="flex gap-2">
+                    <form action={acceptInviteAction}>
+                      <input type="hidden" name="id" value={row.id} />
+                      <Button type="submit">Accept</Button>
+                    </form>
+                    <form action={declineInviteAction}>
+                      <input type="hidden" name="id" value={row.id} />
+                      <Button type="submit" variant="secondary">
+                        Decline
+                      </Button>
+                    </form>
+                  </div>
+                </Card>
               </li>
             ))}
           </ul>
@@ -60,29 +67,34 @@ export default async function FriendsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">Outgoing requests</h2>
+        <SectionTitle>Outgoing requests</SectionTitle>
         {outgoing.length === 0 ? (
-          <p className="text-sm text-zinc-600">None.</p>
+          <p className="text-sm text-zinc-500">None.</p>
         ) : (
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-2">
             {outgoing.map((row) => (
-              <li key={row.id}>Pending with @{row.addresseeUsername}</li>
+              <li key={row.id} className="text-sm text-zinc-700">
+                Pending with <span className="font-medium">@{row.addresseeUsername}</span>
+              </li>
             ))}
           </ul>
         )}
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">Your friends</h2>
+        <SectionTitle>Your friends</SectionTitle>
         {friends.length === 0 ? (
-          <p className="text-sm text-zinc-600">None yet.</p>
+          <p className="text-sm text-zinc-500">None yet.</p>
         ) : (
-          <ul className="space-y-2 text-sm">
+          <ul className="grid gap-3 sm:grid-cols-2">
             {friends.map((friend) => (
               <li key={friend.id}>
-                <Link className="underline" href={`/u/${friend.username}`}>
-                  @{friend.username}
-                </Link>
+                <Card className="flex items-center justify-between">
+                  <span className="font-medium">@{friend.username}</span>
+                  <LinkButton variant="ghost" href={`/u/${friend.username}`}>
+                    View shelf
+                  </LinkButton>
+                </Card>
               </li>
             ))}
           </ul>

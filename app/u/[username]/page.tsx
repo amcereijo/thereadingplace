@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { BookList } from "@/app/components/book-list";
 import { ShelfNav } from "@/app/components/shelf-nav";
+import { Card, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { listBooks } from "@/lib/books";
 import { canReadShelf } from "@/lib/friendships";
@@ -22,10 +23,10 @@ export default async function FriendShelfPage({
   const allowed = await canReadShelf(viewer.id, owner.id);
   if (!allowed) {
     return (
-      <div>
-        <h1 className="text-2xl font-semibold">@{owner.username}</h1>
-        <p className="mt-3 text-sm">This shelf is private.</p>
-      </div>
+      <Card className="max-w-lg">
+        <PageTitle>@{owner.username}</PageTitle>
+        <p className="mt-2 text-sm text-zinc-600">This shelf is private.</p>
+      </Card>
     );
   }
 
@@ -35,8 +36,10 @@ export default async function FriendShelfPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">@{owner.username}&apos;s shelf</h1>
-      <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} />
+      <PageTitle>@{owner.username}&apos;s shelf</PageTitle>
+      <div className="mt-6">
+        <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} />
+      </div>
       <BookList books={books} />
     </div>
   );

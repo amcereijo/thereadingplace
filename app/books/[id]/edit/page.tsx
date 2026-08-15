@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { EditBookForm } from "@/app/components/edit-book-form";
+import { PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { getBook } from "@/lib/books";
 
@@ -11,8 +12,10 @@ export default async function EditBookPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Edit book</h1>
-      <EditBookForm book={book} />
+      <PageTitle>Edit book</PageTitle>
+      <div className="mt-6">
+        <EditBookForm book={book} />
+      </div>
     </div>
   );
 }

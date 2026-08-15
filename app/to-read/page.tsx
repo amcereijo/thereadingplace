@@ -1,5 +1,6 @@
 import { BookList } from "@/app/components/book-list";
 import { ShelfNav } from "@/app/components/shelf-nav";
+import { PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { listBooks } from "@/lib/books";
 
@@ -8,8 +9,10 @@ export default async function ToReadPage() {
   const books = await listBooks(user.id, "to-read");
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">To read</h1>
-      <ShelfNav basePath="" current="to-read" />
+      <PageTitle>To read</PageTitle>
+      <div className="mt-6">
+        <ShelfNav basePath="" current="to-read" />
+      </div>
       <BookList books={books} editable />
     </div>
   );

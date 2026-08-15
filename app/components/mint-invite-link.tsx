@@ -2,26 +2,33 @@
 
 import { useState } from "react";
 import { mintInviteLinkAction } from "@/app/actions/friends";
+import { Button, Card } from "./ui";
 
 export function MintInviteLink() {
   const [url, setUrl] = useState<string | null>(null);
 
   return (
-    <div className="space-y-2">
-      <button
+    <div className="space-y-3">
+      <Button
         type="button"
-        className="rounded border border-zinc-300 px-4 py-2 text-sm"
+        variant="secondary"
         onClick={async () => {
           const result = await mintInviteLinkAction();
           setUrl(result.url);
         }}
       >
         Create new-member link
-      </button>
+      </Button>
       {url ? (
-        <p className="break-all text-sm">
-          One-shot link: <a className="underline" href={url}>{url}</a>
-        </p>
+        <Card className="flex flex-col gap-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">One-shot link</p>
+          <a
+            className="break-all text-sm text-teal-700 hover:text-teal-800 hover:underline"
+            href={url}
+          >
+            {url}
+          </a>
+        </Card>
       ) : null}
     </div>
   );
