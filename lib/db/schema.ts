@@ -19,7 +19,9 @@ export const books = sqliteTable("books", {
   startedAt: text("started_at"),
   finishedAt: text("finished_at"),
   abandonedAt: text("abandoned_at"),
+  dateAdded: text("date_added"),
   note: text("note"),
+  metadataJson: text("metadata_json").notNull().default("{}"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });

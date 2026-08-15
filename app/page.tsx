@@ -22,7 +22,12 @@ export default async function HomePage({
           <PageTitle>Your shelf</PageTitle>
           <PageSubtitle>{books.length} book{books.length === 1 ? "" : "s"}</PageSubtitle>
         </div>
-        <LinkButton href="/books/new">Add book</LinkButton>
+        <div className="flex gap-2">
+          <LinkButton href="/books/import" variant="secondary">
+            Import
+          </LinkButton>
+          <LinkButton href="/books/new">Add book</LinkButton>
+        </div>
       </div>
 
       <ShelfNav basePath="" current={status ?? "all"} />

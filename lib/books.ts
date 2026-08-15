@@ -23,6 +23,16 @@ function parseFormats(raw: string): BookFormat[] {
   }
 }
 
+function parseMetadata(raw: string): Record<string, unknown> {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return {};
+    return parsed as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
 function toBook(row: typeof books.$inferSelect): BookRecord {
   if (!isBookStatus(row.status)) {
     throw new Error("Invalid book status");
@@ -36,7 +46,9 @@ function toBook(row: typeof books.$inferSelect): BookRecord {
     startedAt: row.startedAt,
     finishedAt: row.finishedAt,
     abandonedAt: row.abandonedAt,
+    dateAdded: row.dateAdded,
     note: row.note,
+    metadata: parseMetadata(row.metadataJson),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -70,7 +82,9 @@ export async function createBook(input: {
   startedAt: string | null;
   finishedAt: string | null;
   abandonedAt: string | null;
+  dateAdded?: string | null;
   note: string | null;
+  metadata?: Record<string, unknown>;
 }) {
   const timestamp = nowIso();
   const id = crypto.randomUUID();
@@ -83,7 +97,9 @@ export async function createBook(input: {
     startedAt: input.startedAt,
     finishedAt: input.finishedAt,
     abandonedAt: input.abandonedAt,
+    dateAdded: input.dateAdded,
     note: input.note,
+    metadataJson: JSON.stringify(input.metadata ?? {}),
     createdAt: timestamp,
     updatedAt: timestamp,
   });
@@ -99,7 +115,9 @@ export async function updateBook(
     startedAt: string | null;
     finishedAt: string | null;
     abandonedAt: string | null;
+    dateAdded?: string | null;
     note: string | null;
+    metadata?: Record<string, unknown>;
   },
 ) {
   await db
@@ -111,7 +129,9 @@ export async function updateBook(
       startedAt: input.startedAt,
       finishedAt: input.finishedAt,
       abandonedAt: input.abandonedAt,
+      dateAdded: input.dateAdded,
       note: input.note,
+      metadataJson: JSON.stringify(input.metadata ?? {}),
       updatedAt: nowIso(),
     })
     .where(eq(books.id, id));

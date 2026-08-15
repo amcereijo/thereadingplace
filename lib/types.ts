@@ -36,7 +36,9 @@ export type BookRecord = {
   startedAt: string | null;
   finishedAt: string | null;
   abandonedAt: string | null;
+  dateAdded: string | null;
   note: string | null;
+  metadata: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 };

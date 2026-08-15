@@ -20,7 +20,9 @@ const defaultBook: BookRecord = {
   startedAt: null,
   finishedAt: null,
   abandonedAt: null,
+  dateAdded: null,
   note: null,
+  metadata: {},
   createdAt: "",
   updatedAt: "",
 };
