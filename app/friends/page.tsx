@@ -1,4 +1,5 @@
 import { acceptInviteAction, declineInviteAction } from "@/app/actions/friends";
+import { FriendsList } from "@/app/components/friends-list";
 import { InviteUsernameForm } from "@/app/components/invite-username-form";
 import { MintInviteLink } from "@/app/components/mint-invite-link";
 import { Button, Card, LinkButton, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
@@ -23,6 +24,8 @@ export default async function FriendsPage() {
         <PageTitle>Friends</PageTitle>
         <PageSubtitle>Connect with readers you know.</PageSubtitle>
       </div>
+
+      <FriendsList friends={friends} />
 
       <section className="space-y-3">
         <SectionTitle>Invite by username</SectionTitle>
@@ -73,28 +76,11 @@ export default async function FriendsPage() {
         ) : (
           <ul className="space-y-2">
             {outgoing.map((row) => (
-              <li key={row.id} className="text-sm text-zinc-700">
-                Pending with <span className="font-medium">@{row.addresseeUsername}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="space-y-3">
-        <SectionTitle>Your friends</SectionTitle>
-        {friends.length === 0 ? (
-          <p className="text-sm text-zinc-500">None yet.</p>
-        ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {friends.map((friend) => (
-              <li key={friend.id}>
-                <Card className="flex items-center justify-between">
-                  <span className="font-medium">@{friend.username}</span>
-                  <LinkButton variant="ghost" href={`/u/${friend.username}`}>
-                    View shelf
-                  </LinkButton>
-                </Card>
+              <li key={row.id} className="flex items-center gap-2 text-sm text-zinc-700">
+                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+                  Pending
+                </span>
+                <span className="font-medium">@{row.addresseeUsername}</span>
               </li>
             ))}
           </ul>

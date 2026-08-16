@@ -97,3 +97,16 @@ The system MUST NOT provide a way for either person to end an accepted friendshi
 - **WHEN** either friend of an accepted pair attempts to end the friendship
 - **THEN** the system MUST leave the friendship in place
 - **AND** both people keep access to each other's shelves
+
+### Requirement: Friends management page prioritizes existing friends
+The system SHALL display the accepted friends section first on the friends management page, before invite forms and pending requests. The accepted friends list SHALL be visually distinct and easy to scan. Pending requests SHALL be grouped below and clearly labeled as pending.
+
+#### Scenario: Open friends page
+- **WHEN** a signed-in person opens the friends management page
+- **THEN** the system shows the accepted friends section at the top
+- **AND** invite forms and pending requests appear below it
+
+#### Scenario: Many accepted friends
+- **WHEN** a signed-in person has several accepted friends
+- **THEN** the accepted friends section remains at the top of the page
+- **AND** each friend has a clear link to view their shelf
