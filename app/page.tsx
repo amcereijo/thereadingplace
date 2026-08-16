@@ -1,4 +1,6 @@
+import { auth } from "@clerk/nextjs/server";
 import { BookList } from "@/app/components/book-list";
+import { LandingPage } from "@/app/components/landing-page";
 import { ShelfNav } from "@/app/components/shelf-nav";
 import { LinkButton, PageSubtitle, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
@@ -10,6 +12,12 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return <LandingPage />;
+  }
+
   const user = await requireAppUser();
   const params = await searchParams;
   const status = params.status && isBookStatus(params.status) ? params.status : undefined;
