@@ -141,6 +141,34 @@ export async function deleteBook(id: string) {
   await db.delete(books).where(eq(books.id, id));
 }
 
+export async function copyBook(
+  sourceBookId: string,
+  destinationOwnerId: string,
+  status: BookStatus,
+) {
+  const source = await getBook(sourceBookId);
+  if (!source) return null;
+
+  const timestamp = nowIso();
+  const id = crypto.randomUUID();
+  await db.insert(books).values({
+    id,
+    ownerId: destinationOwnerId,
+    title: source.title,
+    status,
+    formatsJson: JSON.stringify(source.formats),
+    startedAt: null,
+    finishedAt: null,
+    abandonedAt: null,
+    dateAdded: timestamp.slice(0, 10),
+    note: source.note,
+    metadataJson: JSON.stringify({}),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
+  return id;
+}
+
 export type BookCounts = { all: number } & Record<BookStatus, number>;
 
 export async function countBooksByStatus(ownerId: string): Promise<BookCounts> {

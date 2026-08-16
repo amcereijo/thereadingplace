@@ -43,7 +43,7 @@ export default async function FriendShelfPage({
       <div className="mt-6">
         <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} counts={counts} />
       </div>
-      <BookList books={books} />
+      <BookList books={books} friendView />
     </div>
   );
 }
