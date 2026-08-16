@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
-        <ClerkProvider>
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
           <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4 sm:px-6">
               <Link
