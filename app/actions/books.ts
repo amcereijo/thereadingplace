@@ -6,7 +6,7 @@ import { requireAppUser } from "@/lib/auth";
 import { copyBook, createBook, deleteBook, getBook, updateBook } from "@/lib/books";
 import { canReadShelf } from "@/lib/friendships";
 import { isBookStatus } from "@/lib/types";
-import { readFormats, readMetadata, readNote, readOptionalDate, readStatus, readTitle } from "@/lib/forms";
+import { readAuthor, readFormats, readMetadata, readNote, readOptionalDate, readStatus, readTitle } from "@/lib/forms";
 
 function revalidateShelves() {
   revalidatePath("/");
@@ -36,6 +36,7 @@ export async function createBookAction(
     finishedAt: readOptionalDate(formData, "finishedAt"),
     abandonedAt: readOptionalDate(formData, "abandonedAt"),
     note: readNote(formData),
+    author: readAuthor(formData),
   });
 
   revalidateShelves();
@@ -67,6 +68,7 @@ export async function updateBookAction(
     abandonedAt: readOptionalDate(formData, "abandonedAt"),
     dateAdded: readOptionalDate(formData, "dateAdded"),
     note: readNote(formData),
+    author: readAuthor(formData),
     metadata: readMetadata(formData),
   });
 

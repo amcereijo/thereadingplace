@@ -91,7 +91,10 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-base font-semibold text-zinc-900">{book.title}</h2>
+                      <h2 className="text-base font-semibold text-zinc-900">
+                        {book.title}
+                        {book.author ? <span className="font-normal text-zinc-600"> by {book.author}</span> : null}
+                      </h2>
                       <StatusBadge status={book.status} />
                     </div>
                     {book.formats.length > 0 ? (

@@ -26,6 +26,11 @@ export function readNote(formData: FormData) {
   return value || null;
 }
 
+export function readAuthor(formData: FormData) {
+  const value = String(formData.get("author") ?? "").trim();
+  return value || null;
+}
+
 export function readMetadata(formData: FormData): Record<string, unknown> {
   const raw = String(formData.get("metadata") ?? "").trim();
   if (!raw) return {};

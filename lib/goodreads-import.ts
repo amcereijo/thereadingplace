@@ -128,7 +128,6 @@ export async function importBooks(
         .join("\n");
 
       const metadata: Record<string, unknown> = {
-        author: book.author,
         isbn: book.isbn,
         isbn13: book.isbn13,
         rating: book.rating,
@@ -155,6 +154,7 @@ export async function importBooks(
         abandonedAt: null,
         dateAdded: book.dateAdded || null,
         note: note || null,
+        author: book.author || null,
         metadataJson: JSON.stringify(metadata),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

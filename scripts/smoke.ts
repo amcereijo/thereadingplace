@@ -44,6 +44,7 @@ async function main() {
   const bookId = await createBook({
     ownerId: owner.id,
     title: "The Left Hand of Darkness",
+    author: "Ursula K. Le Guin",
     status: "reading",
     formats: ["paperback", "ebook"],
     startedAt: null,
@@ -54,9 +55,11 @@ async function main() {
 
   const created = await getBook(bookId);
   if (!created || created.startedAt) throw new Error("create should not stamp dates");
+  if (created.author !== "Ursula K. Le Guin") throw new Error("author should be stored");
 
   await updateBook(bookId, {
     title: created.title,
+    author: created.author,
     status: "read",
     formats: created.formats,
     startedAt: created.startedAt,

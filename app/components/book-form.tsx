@@ -16,6 +16,7 @@ const defaultBook: BookRecord = {
   id: "",
   ownerId: "",
   title: "",
+  author: null,
   status: "to-read" as BookStatus,
   formats: [],
   startedAt: null,
@@ -31,6 +32,7 @@ const defaultBook: BookRecord = {
 export function BookForm({ action, book, error, submitLabel, cancelHref }: Props) {
   const initial = book ?? defaultBook;
   const [title, setTitle] = useState(initial.title);
+  const [author, setAuthor] = useState(initial.author ?? "");
   const [status, setStatus] = useState<BookStatus>(initial.status);
   const [formats, setFormats] = useState<BookFormat[]>(initial.formats);
   const [startedAt, setStartedAt] = useState(initial.startedAt ?? "");
@@ -40,6 +42,7 @@ export function BookForm({ action, book, error, submitLabel, cancelHref }: Props
 
   function reset() {
     setTitle(initial.title);
+    setAuthor(initial.author ?? "");
     setStatus(initial.status);
     setFormats(initial.formats);
     setStartedAt(initial.startedAt ?? "");
@@ -63,6 +66,11 @@ export function BookForm({ action, book, error, submitLabel, cancelHref }: Props
       <div>
         <Label htmlFor="title">Title</Label>
         <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      </div>
+
+      <div>
+        <Label htmlFor="author">Author</Label>
+        <Input id="author" name="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
       </div>
 
       <div>

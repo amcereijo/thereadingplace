@@ -48,6 +48,7 @@ function toBook(row: typeof books.$inferSelect): BookRecord {
     abandonedAt: row.abandonedAt,
     dateAdded: row.dateAdded,
     note: row.note,
+    author: row.author,
     metadata: parseMetadata(row.metadataJson),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -84,6 +85,7 @@ export async function createBook(input: {
   abandonedAt: string | null;
   dateAdded?: string | null;
   note: string | null;
+  author?: string | null;
   metadata?: Record<string, unknown>;
 }) {
   const timestamp = nowIso();
@@ -99,6 +101,7 @@ export async function createBook(input: {
     abandonedAt: input.abandonedAt,
     dateAdded: input.dateAdded,
     note: input.note,
+    author: input.author,
     metadataJson: JSON.stringify(input.metadata ?? {}),
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -117,6 +120,7 @@ export async function updateBook(
     abandonedAt: string | null;
     dateAdded?: string | null;
     note: string | null;
+    author?: string | null;
     metadata?: Record<string, unknown>;
   },
 ) {
@@ -131,6 +135,7 @@ export async function updateBook(
       abandonedAt: input.abandonedAt,
       dateAdded: input.dateAdded,
       note: input.note,
+      author: input.author,
       metadataJson: JSON.stringify(input.metadata ?? {}),
       updatedAt: nowIso(),
     })
@@ -162,6 +167,7 @@ export async function copyBook(
     abandonedAt: null,
     dateAdded: timestamp.slice(0, 10),
     note: source.note,
+    author: source.author,
     metadataJson: JSON.stringify({}),
     createdAt: timestamp,
     updatedAt: timestamp,
