@@ -36,7 +36,7 @@ export function FriendsList({ friends }: Props) {
 
       {filtered.length === 0 ? (
         query ? (
-          <EmptyState>No friends match "{query}".</EmptyState>
+          <EmptyState>No friends match &ldquo;{query}&rdquo;.</EmptyState>
         ) : (
           <EmptyState>None yet. Send an invite to get started.</EmptyState>
         )

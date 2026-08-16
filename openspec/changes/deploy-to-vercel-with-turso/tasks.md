@@ -1,9 +1,9 @@
 ## 1. External setup
 
-- [ ] 1.1 Create a Turso database and generate an auth token.
-- [ ] 1.2 Create a Vercel project linked to the GitHub repository.
-- [ ] 1.3 Add Vercel runtime environment variables: `DATABASE_URL`, `TURSO_AUTH_TOKEN`, Clerk production keys.
-- [ ] 1.4 Add GitHub repository secrets: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+- [x] 1.1 Create a Turso database and generate an auth token.
+- [x] 1.2 Create a Vercel project linked to the GitHub repository.
+- [x] 1.3 Add Vercel runtime environment variables: `DATABASE_URL`, `TURSO_AUTH_TOKEN`, Clerk production keys.
+- [x] 1.4 Add GitHub repository secrets: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
 ## 2. Database connectivity
 
@@ -18,4 +18,4 @@
 ## 4. Documentation and validation
 
 - [x] 4.1 Add deployment setup instructions to the README or a dedicated `DEPLOYMENT.md`.
-- [ ] 4.2 Run a test push to `main` and confirm migrations apply and the Vercel deploy succeeds.
+- [x] 4.2 Run a test push to `main` and confirm migrations apply and the Vercel deploy succeeds.

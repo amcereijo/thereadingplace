@@ -2,7 +2,7 @@ import { acceptInviteAction, declineInviteAction } from "@/app/actions/friends";
 import { FriendsList } from "@/app/components/friends-list";
 import { InviteUsernameForm } from "@/app/components/invite-username-form";
 import { MintInviteLink } from "@/app/components/mint-invite-link";
-import { Button, Card, LinkButton, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
+import { Button, Card, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import {
   listAcceptedFriends,
