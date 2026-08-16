@@ -70,8 +70,6 @@ This app deploys automatically to Vercel when code is pushed to the `main` branc
 
    Make sure these are configured for the **Production** environment.
 
-   **Important:** do not rely on the Vercel Turso Marketplace integration's `DATABASE_URL`. That integration creates a fresh **branch database** (`dpl-*`) for each deployment, which makes it look like all data disappears after every deploy. This app uses `TURSO_DATABASE_URL` explicitly to always connect to the main database.
-
 #### 3. Add GitHub repository secrets
 
 In the GitHub repository, go to **Settings → Secrets and variables → Actions** and add:
