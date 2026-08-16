@@ -4,8 +4,20 @@ import { createClient } from "@libsql/client";
 
 async function migrate() {
   const dbPath = process.env.DATABASE_PATH ?? path.join(process.cwd(), "data", "app.db");
-  const databaseUrl = process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL ?? `file:${dbPath}`;
+  // Prefer the explicit TURSO_DATABASE_URL so the Vercel Turso integration cannot
+  // silently inject a per-deployment branch database via DATABASE_URL.
+  const databaseUrl = process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_URL ?? `file:${dbPath}`;
   const migrationsDir = path.join(process.cwd(), "drizzle");
+
+  function assertNotBranchDatabase(url: string) {
+    if (/^libsql:\/\/dpl-[^.]+\./i.test(url)) {
+      throw new Error(
+        `Refusing to connect to a Turso branch database (resolved URL: ${url}). Set TURSO_DATABASE_URL to the main database URL in your GitHub repository secrets and unset any Turso integration-provided DATABASE_URL.`
+      );
+    }
+  }
+
+  assertNotBranchDatabase(databaseUrl);
 
   if (databaseUrl.startsWith("file:")) {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });

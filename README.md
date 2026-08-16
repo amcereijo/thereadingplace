@@ -59,7 +59,7 @@ This app deploys automatically to Vercel when code is pushed to the `main` branc
 
 1. Import the GitHub repository in the Vercel dashboard.
 2. In the project settings, add these environment variables under **Settings → Environment Variables**:
-   - `DATABASE_URL` — the Turso database URL from step 1
+   - `TURSO_DATABASE_URL` — the Turso database URL from step 1
    - `TURSO_AUTH_TOKEN` — the Turso auth token from step 1
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — your Clerk production publishable key
    - `CLERK_SECRET_KEY` — your Clerk production secret key
@@ -69,6 +69,8 @@ This app deploys automatically to Vercel when code is pushed to the `main` branc
    - `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL` — `/`
 
    Make sure these are configured for the **Production** environment.
+
+   **Important:** do not rely on the Vercel Turso Marketplace integration's `DATABASE_URL`. That integration creates a fresh **branch database** (`dpl-*`) for each deployment, which makes it look like all data disappears after every deploy. This app uses `TURSO_DATABASE_URL` explicitly to always connect to the main database.
 
 #### 3. Add GitHub repository secrets
 
