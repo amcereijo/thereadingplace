@@ -4,12 +4,16 @@ import { createClient } from "@libsql/client";
 
 async function migrate() {
   const dbPath = process.env.DATABASE_PATH ?? path.join(process.cwd(), "data", "app.db");
+  const databaseUrl = process.env.DATABASE_URL ?? `file:${dbPath}`;
   const migrationsDir = path.join(process.cwd(), "drizzle");
 
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  if (databaseUrl.startsWith("file:")) {
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  }
 
   const client = createClient({
-    url: process.env.DATABASE_URL ?? `file:${dbPath}`,
+    url: databaseUrl,
+    authToken: process.env.TURSO_AUTH_TOKEN,
   });
 
   await client.execute(`
