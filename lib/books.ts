@@ -99,7 +99,7 @@ export async function createBook(input: {
     startedAt: input.startedAt,
     finishedAt: input.finishedAt,
     abandonedAt: input.abandonedAt,
-    dateAdded: input.dateAdded,
+    dateAdded: input.dateAdded || timestamp,
     note: input.note,
     author: input.author,
     metadataJson: JSON.stringify(input.metadata ?? {}),
