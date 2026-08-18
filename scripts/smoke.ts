@@ -54,7 +54,8 @@ async function main() {
   });
 
   const created = await getBook(bookId);
-  if (!created || created.startedAt) throw new Error("create should not stamp dates");
+  const today = new Date().toISOString().slice(0, 10);
+  if (!created || created.startedAt !== today) throw new Error("create should stamp startedAt for reading");
   if (created.author !== "Ursula K. Le Guin") throw new Error("author should be stored");
 
   await updateBook(bookId, {
@@ -68,8 +69,8 @@ async function main() {
     note: "still thinking about it",
   });
   const moved = await getBook(bookId);
-  if (!moved || moved.status !== "read" || moved.finishedAt) {
-    throw new Error("status move should not stamp dates");
+  if (!moved || moved.status !== "read" || moved.finishedAt !== today || !moved.startedAt) {
+    throw new Error("status move to read should stamp finishedAt and keep startedAt");
   }
 
   if ((await listBooks(owner.id, "read")).length !== 1) throw new Error("status filter failed");

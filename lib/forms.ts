@@ -12,7 +12,8 @@ export function readStatus(formData: FormData): BookStatus | null {
 export function readFormats(formData: FormData): BookFormat[] {
   return formData
     .getAll("formats")
-    .map(String)
+    .flatMap((value) => String(value).split(","))
+    .map((v) => v.trim())
     .filter((value): value is BookFormat => isBookFormat(value));
 }
 

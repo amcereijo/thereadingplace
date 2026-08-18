@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { updateBookAction } from "@/app/actions/books";
 import { BOOK_FORMATS, BOOK_STATUSES, STATUS_LABELS, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
-import { Button, ErrorMessage, Input, Label, Select, TextArea } from "./ui";
+import { Button, ErrorMessage, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 
 type MetaEntry = { key: string; value: string };
 
@@ -21,20 +22,70 @@ function recordFromEntries(entries: MetaEntry[]): Record<string, unknown> {
   return rec;
 }
 
+function todayYmd() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function computeDatesOnStatusChange(
+  newStatus: BookStatus,
+  oldStatus: BookStatus,
+  currentStartedAt: string,
+): { startedAt: string | undefined | null; finishedAt: string | undefined | null; abandonedAt: string | undefined | null } {
+  if (newStatus === oldStatus) {
+    return { startedAt: undefined, finishedAt: undefined, abandonedAt: undefined };
+  }
+
+  const today = todayYmd();
+
+  switch (newStatus) {
+    case "read":
+      return { startedAt: undefined, finishedAt: today, abandonedAt: null };
+    case "reading":
+      return { startedAt: currentStartedAt || today, finishedAt: null, abandonedAt: null };
+    case "abandoned":
+      return { startedAt: undefined, finishedAt: null, abandonedAt: today };
+    case "to-read":
+      return { startedAt: null, finishedAt: null, abandonedAt: null };
+  }
+}
+
 export function EditBookForm({ book }: { book: BookRecord }) {
-  const [state, action] = useActionState(updateBookAction, { error: null as string | null });
+  const router = useRouter();
+  const [state, action] = useActionState(updateBookAction, { error: null as string | null, success: false as boolean });
+
+  useEffect(() => {
+    if (state?.success) {
+      router.refresh();
+    }
+  }, [state?.success, router]);
 
   const [title, setTitle] = useState(book.title);
   const [author, setAuthor] = useState(book.author ?? "");
   const [status, setStatus] = useState<BookStatus>(book.status);
   const [formats, setFormats] = useState<BookFormat[]>(book.formats);
-  const [startedAt, setStartedAt] = useState(book.startedAt ?? "");
-  const [finishedAt, setFinishedAt] = useState(book.finishedAt ?? "");
-  const [abandonedAt, setAbandonedAt] = useState(book.abandonedAt ?? "");
+  const [startedAt, setStartedAt] = useState<string>(book.startedAt ?? "");
+  const [finishedAt, setFinishedAt] = useState<string>(book.finishedAt ?? "");
+  const [abandonedAt, setAbandonedAt] = useState<string>(book.abandonedAt ?? "");
   const [dateAdded, setDateAdded] = useState(book.dateAdded?.slice(0, 10) ?? "");
   const [note, setNote] = useState(book.note?.replace(/<br\s*\/?>/gi, "\n") ?? "");
   const [editingNote, setEditingNote] = useState(true);
   const [metaEntries, setMetaEntries] = useState<MetaEntry[]>(entriesFromRecord(book.metadata));
+
+  // Sync local state when book prop changes (e.g. after router.refresh())
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    setTitle(book.title);
+    setAuthor(book.author ?? "");
+    setStatus(book.status);
+    setFormats(book.formats);
+    setStartedAt(book.startedAt ?? "");
+    setFinishedAt(book.finishedAt ?? "");
+    setAbandonedAt(book.abandonedAt ?? "");
+    setDateAdded(book.dateAdded?.slice(0, 10) ?? "");
+    setNote(book.note?.replace(/<br\s*\/?>/gi, "\n") ?? "");
+    setMetaEntries(entriesFromRecord(book.metadata));
+  }, [book]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function reset() {
     setTitle(book.title);
@@ -48,6 +99,14 @@ export function EditBookForm({ book }: { book: BookRecord }) {
     setNote(book.note?.replace(/<br\s*\/?>/gi, "\n") ?? "");
     setEditingNote(true);
     setMetaEntries(entriesFromRecord(book.metadata));
+  }
+
+  function handleStatusChange(newStatus: BookStatus) {
+    const dates = computeDatesOnStatusChange(newStatus, status, startedAt);
+    setStatus(newStatus);
+    if (dates.startedAt !== undefined) setStartedAt(dates.startedAt ?? "");
+    if (dates.finishedAt !== undefined) setFinishedAt(dates.finishedAt ?? "");
+    if (dates.abandonedAt !== undefined) setAbandonedAt(dates.abandonedAt ?? "");
   }
 
   function toggleFormat(format: BookFormat) {
@@ -88,7 +147,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
 
       <div>
         <Label htmlFor="status">Status</Label>
-        <Select id="status" name="status" value={status} onChange={(e) => setStatus(e.target.value as BookStatus)}>
+        <Select id="status" name="status" value={status} onChange={(e) => handleStatusChange(e.target.value as BookStatus)}>
           {BOOK_STATUSES.map((s) => (
             <option key={s} value={s}>
               {STATUS_LABELS[s]}
@@ -202,6 +261,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
         <Button type="button" variant="secondary" onClick={reset}>
           Discard changes
         </Button>
+        {state?.success && <SuccessMessage>Changes saved successfully!</SuccessMessage>}
       </div>
     </form>
   );

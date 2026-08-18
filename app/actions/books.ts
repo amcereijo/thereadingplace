@@ -44,20 +44,20 @@ export async function createBookAction(
 }
 
 export async function updateBookAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; success: boolean },
   formData: FormData,
 ) {
   const user = await requireAppUser();
   const id = String(formData.get("id") ?? "");
   const book = await getBook(id);
   if (!book || book.ownerId !== user.id) {
-    return { error: "Book not found." };
+    return { error: "Book not found.", success: false };
   }
 
   const title = readTitle(formData);
   const status = readStatus(formData);
-  if (!title) return { error: "A title is required." };
-  if (!status) return { error: "Choose a status." };
+  if (!title) return { error: "A title is required.", success: false };
+  if (!status) return { error: "Choose a status.", success: false };
 
   await updateBook(id, {
     title,
@@ -70,10 +70,12 @@ export async function updateBookAction(
     note: readNote(formData),
     author: readAuthor(formData),
     metadata: readMetadata(formData),
+    oldStatus: book.status,
+    currentStartedAt: book.startedAt,
   });
 
   revalidateShelves();
-  return { error: null };
+  return { error: null, success: true };
 }
 
 export async function deleteBookAction(formData: FormData) {

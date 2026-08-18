@@ -13,6 +13,38 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function todayYmd() {
+  return nowIso().slice(0, 10);
+}
+
+export type DateOverrides = {
+  startedAt: string | undefined | null;
+  finishedAt: string | undefined | null;
+  abandonedAt: string | undefined | null;
+};
+
+export function computeDatesForStatus(
+  newStatus: BookStatus,
+  oldStatus: BookStatus,
+  today: string,
+  currentStartedAt?: string | null,
+): DateOverrides {
+  if (newStatus === oldStatus) {
+    return { startedAt: undefined, finishedAt: undefined, abandonedAt: undefined };
+  }
+
+  switch (newStatus) {
+    case "read":
+      return { startedAt: undefined, finishedAt: today, abandonedAt: null };
+    case "reading":
+      return { startedAt: currentStartedAt ?? today, finishedAt: null, abandonedAt: null };
+    case "abandoned":
+      return { startedAt: undefined, finishedAt: null, abandonedAt: today };
+    case "to-read":
+      return { startedAt: null, finishedAt: null, abandonedAt: null };
+  }
+}
+
 function parseFormats(raw: string): BookFormat[] {
   try {
     const parsed = JSON.parse(raw) as unknown;
@@ -87,18 +119,21 @@ export async function createBook(input: {
   note: string | null;
   author?: string | null;
   metadata?: Record<string, unknown>;
+  oldStatus?: BookStatus;
 }) {
   const timestamp = nowIso();
   const id = crypto.randomUUID();
+  const oldStatus = input.oldStatus ?? "to-read";
+  const dates = computeDatesForStatus(input.status, oldStatus, timestamp.slice(0, 10));
   await db.insert(books).values({
     id,
     ownerId: input.ownerId,
     title: input.title,
     status: input.status,
     formatsJson: JSON.stringify(input.formats),
-    startedAt: input.startedAt,
-    finishedAt: input.finishedAt,
-    abandonedAt: input.abandonedAt,
+    startedAt: dates.startedAt ?? null,
+    finishedAt: dates.finishedAt ?? null,
+    abandonedAt: dates.abandonedAt ?? null,
     dateAdded: input.dateAdded || timestamp.slice(0, 10),
     note: input.note,
     author: input.author,
@@ -122,17 +157,35 @@ export async function updateBook(
     note: string | null;
     author?: string | null;
     metadata?: Record<string, unknown>;
+    oldStatus?: BookStatus;
+    currentStartedAt?: string | null;
   },
 ) {
+  const oldStatus = input.oldStatus;
+  let startedAt: string | null;
+  let finishedAt: string | null;
+  let abandonedAt: string | null;
+
+  if (oldStatus !== undefined && oldStatus !== input.status) {
+    const dates = computeDatesForStatus(input.status, oldStatus, todayYmd(), input.currentStartedAt);
+    startedAt = dates.startedAt === undefined ? input.startedAt : dates.startedAt;
+    finishedAt = dates.finishedAt === undefined ? input.finishedAt : dates.finishedAt;
+    abandonedAt = dates.abandonedAt === undefined ? input.abandonedAt : dates.abandonedAt;
+  } else {
+    startedAt = input.startedAt;
+    finishedAt = input.finishedAt;
+    abandonedAt = input.abandonedAt;
+  }
+
   await db
     .update(books)
     .set({
       title: input.title,
       status: input.status,
       formatsJson: JSON.stringify(input.formats),
-      startedAt: input.startedAt,
-      finishedAt: input.finishedAt,
-      abandonedAt: input.abandonedAt,
+      startedAt,
+      finishedAt,
+      abandonedAt,
       dateAdded: input.dateAdded,
       note: input.note,
       author: input.author,
@@ -156,15 +209,16 @@ export async function copyBook(
 
   const timestamp = nowIso();
   const id = crypto.randomUUID();
+  const dates = computeDatesForStatus(status, "to-read", timestamp.slice(0, 10));
   await db.insert(books).values({
     id,
     ownerId: destinationOwnerId,
     title: source.title,
     status,
     formatsJson: JSON.stringify(source.formats),
-    startedAt: null,
-    finishedAt: null,
-    abandonedAt: null,
+    startedAt: dates.startedAt,
+    finishedAt: dates.finishedAt,
+    abandonedAt: dates.abandonedAt,
     dateAdded: timestamp.slice(0, 10),
     note: source.note,
     author: source.author,
