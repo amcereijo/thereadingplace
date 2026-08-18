@@ -31,7 +31,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
   const [startedAt, setStartedAt] = useState(book.startedAt ?? "");
   const [finishedAt, setFinishedAt] = useState(book.finishedAt ?? "");
   const [abandonedAt, setAbandonedAt] = useState(book.abandonedAt ?? "");
-  const [dateAdded, setDateAdded] = useState(book.dateAdded ?? "");
+  const [dateAdded, setDateAdded] = useState(book.dateAdded?.slice(0, 10) ?? "");
   const [note, setNote] = useState(book.note?.replace(/<br\s*\/?>/gi, "\n") ?? "");
   const [editingNote, setEditingNote] = useState(true);
   const [metaEntries, setMetaEntries] = useState<MetaEntry[]>(entriesFromRecord(book.metadata));
