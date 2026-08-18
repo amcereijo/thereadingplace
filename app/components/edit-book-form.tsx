@@ -25,6 +25,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
   const [state, action] = useActionState(updateBookAction, { error: null as string | null });
 
   const [title, setTitle] = useState(book.title);
+  const [author, setAuthor] = useState(book.author ?? "");
   const [status, setStatus] = useState<BookStatus>(book.status);
   const [formats, setFormats] = useState<BookFormat[]>(book.formats);
   const [startedAt, setStartedAt] = useState(book.startedAt ?? "");
@@ -37,6 +38,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
 
   function reset() {
     setTitle(book.title);
+    setAuthor(book.author ?? "");
     setStatus(book.status);
     setFormats(book.formats);
     setStartedAt(book.startedAt ?? "");
@@ -77,6 +79,11 @@ export function EditBookForm({ book }: { book: BookRecord }) {
       <div>
         <Label htmlFor="title">Title</Label>
         <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      </div>
+
+      <div>
+        <Label htmlFor="author">Author</Label>
+        <Input id="author" name="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
       </div>
 
       <div>
