@@ -36,7 +36,7 @@ export default function RootLayout({
             <div className="mx-auto flex h-14 max-w-4xl items-center justify-center px-4 sm:px-6">
               <Link
                 href="/"
-                className="text-lg font-bold tracking-tight text-teal-800 hover:text-teal-900"
+                className="truncate pe-28 text-lg font-bold tracking-tight text-teal-800 hover:text-teal-900"
               >
                 The Reading Place
               </Link>
