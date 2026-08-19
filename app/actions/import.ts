@@ -15,7 +15,7 @@ export async function importGoodreadsAction(
     if (parseResult.errors.length > 0 && parseResult.parsedBooks.length === 0) {
       return {
         success: false,
-        error: "Failed to parse CSV file. Please check the format.",
+        error: "import.parseError",
       };
     }
 
@@ -31,10 +31,10 @@ export async function importGoodreadsAction(
     revalidatePath("/abandoned");
 
     return { success: true, progress };
-  } catch (e) {
+  } catch {
     return {
       success: false,
-      error: e instanceof Error ? e.message : "Failed to import books",
+      error: "import.importError",
     };
   }
 }

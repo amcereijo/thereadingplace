@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "title": "The Reading Place",
+    "description": "A personal book shelf you own."
+  },
+  "nav": {
+    "shelf": "Shelf",
+    "friends": "Friends"
+  },
+  "locale": {
+    "toggle": "Language",
+    "en": "EN",
+    "es": "ES"
+  },
+  "landing": {
+    "tagline": "Your personal reading companion",
+    "title": "Track, share, and discover your next great read",
+    "subtitle": "The Reading Place helps you organize your bookshelf, stay on top of what you are reading, and share recommendations with friends.",
+    "featureOrganize": "Organize",
+    "featureOrganizeDescription": "Log books, statuses, formats, dates, and notes in one place.",
+    "featureConnect": "Connect",
+    "featureConnectDescription": "Share shelves with friends and see what they are reading.",
+    "featureImport": "Import",
+    "featureImportDescription": "Bring your Goodreads library over in just a few clicks.",
+    "getStarted": "Get started free",
+    "signIn": "Sign in"
+  },
+  "shelf": {
+    "yourShelf": "Your shelf",
+    "booksCount": "{count} book",
+    "booksCount_plural": "{count} books",
+    "addBook": "Add book",
+    "import": "Import",
+    "sort": "Sort",
+    "sortDateAddedDesc": "Date added (newest)",
+    "sortDateAddedAsc": "Date added (oldest)",
+    "sortTitleAsc": "Title (A–Z)",
+    "sortTitleDesc": "Title (Z–A)",
+    "sortFinishedDesc": "Finished (newest)",
+    "sortFinishedAsc": "Finished (oldest)",
+    "empty": "No books here yet.",
+    "by": "by",
+    "added": "added",
+    "started": "started",
+    "finished": "finished",
+    "abandoned": "abandoned",
+    "notes": "Notes",
+    "status": "Status",
+    "formats": "Formats",
+    "dateAdded": "Date Added",
+    "startedAt": "Started",
+    "finishedAt": "Finished",
+    "abandonedAt": "Abandoned",
+    "note": "Note",
+    "metadata": "Metadata",
+    "edit": "Edit",
+    "delete": "Delete",
+    "details": "Details",
+    "showLess": "Show less",
+    "all": "All",
+    "more": "... and {count} more"
+  },
+  "status": {
+    "to-read": "To read",
+    "reading": "Reading",
+    "read": "Read",
+    "abandoned": "Abandoned"
+  },
+  "bookForm": {
+    "title": "Title",
+    "author": "Author",
+    "status": "Status",
+    "formats": "Formats",
+    "started": "Started",
+    "finished": "Finished",
+    "abandoned": "Abandoned",
+    "note": "Note",
+    "dates": "Dates",
+    "added": "Added",
+    "metadata": "Metadata",
+    "addField": "Add field",
+    "done": "Done",
+    "noNote": "No note yet.",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "discardChanges": "Discard changes",
+    "saveChanges": "Save changes",
+    "changesSaved": "Changes saved successfully!"
+  },
+  "newBook": {
+    "title": "Add a book",
+    "subtitle": "Only the title is required. Everything else is optional."
+  },
+  "editBook": {
+    "title": "Edit book"
+  },
+  "friends": {
+    "title": "Friends",
+    "subtitle": "Connect with readers you know.",
+    "yourFriends": "Your friends",
+    "findFriend": "Find a friend…",
+    "noMatch": "No friends match \"{query}\".",
+    "noneYet": "None yet. Send an invite to get started.",
+    "viewShelf": "View shelf",
+    "inviteByUsername": "Invite by username",
+    "username": "Username",
+    "usernamePlaceholder": "@friend",
+    "invite": "Invite",
+    "inviteSent": "Invite sent.",
+    "newMemberLink": "New-member link",
+    "newMemberLinkDescription": "One-shot link. Send it to someone who does not have an account yet.",
+    "createNewMemberLink": "Create new-member link",
+    "oneShotLink": "One-shot link",
+    "incomingRequests": "Incoming requests",
+    "none": "None.",
+    "outgoingRequests": "Outgoing requests",
+    "pending": "Pending",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "addToShelf": {
+    "title": "Add to my shelf",
+    "description": "Choose a status for this book.",
+    "selectStatus": "Select status…",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "confirming": "Confirming…"
+  },
+  "import": {
+    "title": "Import from Goodreads",
+    "subtitle": "Upload your Goodreads CSV export to import your reading history.",
+    "instructions": "To get your CSV file from Goodreads, sign in and go to <strong>My Books</strong>, then click <strong>Import and export</strong> in the left sidebar. Under <strong>Export Library</strong>, click <strong>Export to CSV</strong> and wait for the file to download.",
+    "dropzoneProcessing": "Processing…",
+    "dropzoneText": "Drag and drop your CSV file here, or",
+    "browse": "browse",
+    "progress": "Progress",
+    "parseWarnings": "{count} warning(s) during parse",
+    "importComplete": "Import complete! {imported} book(s) imported, {skipped} skipped (duplicates), {errors} error(s).",
+    "goToShelf": "Go to shelf",
+    "csvError": "Please upload a CSV file",
+    "parseError": "Failed to parse CSV file. Please check the format.",
+    "importError": "Failed to import books",
+    "processError": "Failed to process file"
+  },
+  "claimUsername": {
+    "title": "Choose a username",
+    "subtitle": "Friends will invite you with this handle.",
+    "username": "Username",
+    "usernamePlaceholder": "your_handle",
+    "usernameHint": "3–32 lowercase letters, numbers, or underscores.",
+    "saveUsername": "Save username"
+  },
+  "invite": {
+    "invalid": "This invite link is no longer valid.",
+    "existing": "This invite link is only for new accounts. You already have an account."
+  },
+  "errors": {
+    "titleRequired": "A title is required.",
+    "statusRequired": "Choose a status.",
+    "bookNotFound": "Book not found.",
+    "shelfAccessDenied": "You do not have access to this shelf.",
+    "usernameNotFound": "That username was not found.",
+    "cannotInviteSelf": "You cannot invite yourself.",
+    "alreadyFriends": "You are already friends.",
+    "pendingRequest": "A request is already pending.",
+    "invalidUsername": "Use 3–32 letters, numbers, or underscores.",
+    "usernameTaken": "That username is taken."
+  },
+  "back": "Go back"
+}

@@ -2,14 +2,16 @@
 
 import { useActionState, useState } from "react";
 import { copyBookFromFriendAction } from "@/app/actions/books";
-import { BOOK_STATUSES, STATUS_LABELS } from "@/lib/types";
+import { BOOK_STATUSES, getStatusLabel } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage } from "./ui";
 
 type Props = {
   bookId: string;
+  dictionary: Dictionary;
 };
 
-export function AddToShelfButton({ bookId }: Props) {
+export function AddToShelfButton({ bookId, dictionary }: Props) {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(async (_prev: { error: string | null }, formData: FormData) => {
     const result = await copyBookFromFriendAction({ error: null }, formData);
@@ -20,7 +22,7 @@ export function AddToShelfButton({ bookId }: Props) {
   return (
     <div className="relative inline-block">
       <Button variant="secondary" onClick={() => setOpen(true)}>
-        Add to my shelf
+        {dictionary.addToShelf.title}
       </Button>
 
       {open ? (
@@ -31,8 +33,8 @@ export function AddToShelfButton({ bookId }: Props) {
           }}
         >
           <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-6 shadow-xl">
-            <h3 className="text-base font-semibold text-zinc-900">Add to my shelf</h3>
-            <p className="mt-1 text-sm text-zinc-600">Choose a status for this book.</p>
+            <h3 className="text-base font-semibold text-zinc-900">{dictionary.addToShelf.title}</h3>
+            <p className="mt-1 text-sm text-zinc-600">{dictionary.addToShelf.description}</p>
 
             <form action={formAction} className="mt-4 space-y-4">
               <input type="hidden" name="bookId" value={bookId} />
@@ -43,23 +45,23 @@ export function AddToShelfButton({ bookId }: Props) {
                 defaultValue=""
               >
                 <option value="" disabled>
-                  Select status…
+                  {dictionary.addToShelf.selectStatus}
                 </option>
                 {BOOK_STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {STATUS_LABELS[s]}
+                    {getStatusLabel(dictionary, s)}
                   </option>
                 ))}
               </select>
 
-              {state.error ? <ErrorMessage>{state.error}</ErrorMessage> : null}
+              {state.error ? <ErrorMessage>{translateError(dictionary, state.error)}</ErrorMessage> : null}
 
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-                  Cancel
+                  {dictionary.addToShelf.cancel}
                 </Button>
                 <Button type="submit" disabled={pending}>
-                  {pending ? "Confirming…" : "Confirm"}
+                  {pending ? dictionary.addToShelf.confirming : dictionary.addToShelf.confirm}
                 </Button>
               </div>
             </form>
@@ -68,4 +70,17 @@ export function AddToShelfButton({ bookId }: Props) {
       ) : null}
     </div>
   );
+}
+
+function translateError(dictionary: Dictionary, key: string): string {
+  const parts = key.split(".");
+  let current: unknown = dictionary;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return key;
+    }
+  }
+  return typeof current === "string" ? current : key;
 }

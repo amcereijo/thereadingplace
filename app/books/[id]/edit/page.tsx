@@ -4,20 +4,22 @@ import { PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { getBook } from "@/lib/books";
 import { BackButton } from "@/app/components/back-button";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireAppUser();
   const { id } = await params;
   const book = await getBook(id);
+  const { dictionary, t } = await getDictionaryForLocale();
   if (!book || book.ownerId !== user.id) notFound();
 
   return (
     <div>
       <div className="mb-6 flex items-center gap-3">
         <BackButton />
-        <PageTitle>Edit book</PageTitle>
+        <PageTitle>{t("editBook.title")}</PageTitle>
       </div>
-      <EditBookForm book={book} />
+      <EditBookForm book={book} dictionary={dictionary} />
     </div>
   );
 }

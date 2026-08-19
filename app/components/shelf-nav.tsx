@@ -1,20 +1,22 @@
 import Link from "next/link";
-import { BOOK_STATUSES, STATUS_LABELS, type BookStatus } from "@/lib/types";
+import { BOOK_STATUSES, getStatusLabel, type BookStatus } from "@/lib/types";
 import type { BookCounts } from "@/lib/books";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { cn } from "./ui";
 
 type Props = {
   basePath: string;
   current?: BookStatus | "all";
   counts?: BookCounts;
+  dictionary: Dictionary;
 };
 
-export function ShelfNav({ basePath, current = "all", counts }: Props) {
+export function ShelfNav({ basePath, current = "all", counts, dictionary }: Props) {
   const items = [
-    { href: basePath || "/", label: "All", key: "all" as const },
+    { href: basePath || "/", label: dictionary.shelf.all, key: "all" as const },
     ...BOOK_STATUSES.map((status) => ({
       href: `${basePath}/${status}`,
-      label: STATUS_LABELS[status],
+      label: getStatusLabel(dictionary, status),
       key: status,
     })),
   ];

@@ -1,14 +1,15 @@
 import { Card, PageTitle, StyledLink } from "@/app/components/ui";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 
-export default function ExistingInvitePage() {
+export default async function ExistingInvitePage() {
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
   return (
     <Card className="max-w-lg">
-      <PageTitle>This link is for new members</PageTitle>
-      <p className="mt-2 text-sm text-zinc-600">
-        You already have an account, so the invite was not used.
-      </p>
+      <PageTitle>{dictionary.invite.existing}</PageTitle>
       <div className="mt-5">
-        <StyledLink href="/">Go to your shelf</StyledLink>
+        <StyledLink href="/">{dictionary.nav.shelf}</StyledLink>
       </div>
     </Card>
   );

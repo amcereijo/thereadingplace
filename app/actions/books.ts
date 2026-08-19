@@ -24,8 +24,8 @@ export async function createBookAction(
   const title = readTitle(formData);
   const status = readStatus(formData);
 
-  if (!title) return { error: "A title is required." };
-  if (!status) return { error: "Choose a status." };
+  if (!title) return { error: "errors.titleRequired" };
+  if (!status) return { error: "errors.statusRequired" };
 
   await createBook({
     ownerId: user.id,
@@ -51,13 +51,13 @@ export async function updateBookAction(
   const id = String(formData.get("id") ?? "");
   const book = await getBook(id);
   if (!book || book.ownerId !== user.id) {
-    return { error: "Book not found.", success: false };
+    return { error: "errors.bookNotFound", success: false };
   }
 
   const title = readTitle(formData);
   const status = readStatus(formData);
-  if (!title) return { error: "A title is required.", success: false };
-  if (!status) return { error: "Choose a status.", success: false };
+  if (!title) return { error: "errors.titleRequired", success: false };
+  if (!status) return { error: "errors.statusRequired", success: false };
 
   await updateBook(id, {
     title,
@@ -97,14 +97,14 @@ export async function copyBookFromFriendAction(
   const bookId = String(formData.get("bookId") ?? "");
   const status = String(formData.get("status") ?? "");
 
-  if (!bookId) return { error: "Book not found." };
-  if (!status || !isBookStatus(status)) return { error: "Choose a status." };
+  if (!bookId) return { error: "errors.bookNotFound" };
+  if (!status || !isBookStatus(status)) return { error: "errors.statusRequired" };
 
   const book = await getBook(bookId);
-  if (!book) return { error: "Book not found." };
+  if (!book) return { error: "errors.bookNotFound" };
 
   const allowed = await canReadShelf(user.id, book.ownerId);
-  if (!allowed) return { error: "You do not have access to this shelf." };
+  if (!allowed) return { error: "errors.shelfAccessDenied" };
 
   await copyBook(bookId, user.id, status);
 

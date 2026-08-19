@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BOOK_FORMATS, BOOK_STATUSES, STATUS_LABELS, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
+import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label, LinkButton, Select, TextArea } from "./ui";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
   error?: string | null;
   submitLabel: string;
   cancelHref?: string;
+  dictionary: Dictionary;
 };
 
 const defaultBook: BookRecord = {
@@ -29,7 +31,7 @@ const defaultBook: BookRecord = {
   updatedAt: "",
 };
 
-export function BookForm({ action, book, error, submitLabel, cancelHref }: Props) {
+export function BookForm({ action, book, error, submitLabel, cancelHref, dictionary }: Props) {
   const initial = book ?? defaultBook;
   const [title, setTitle] = useState(initial.title);
   const [author, setAuthor] = useState(initial.author ?? "");
@@ -61,31 +63,31 @@ export function BookForm({ action, book, error, submitLabel, cancelHref }: Props
     <form action={action} className="max-w-xl space-y-5">
       {book ? <input type="hidden" name="id" value={book.id} /> : null}
       <input type="hidden" name="formats" value={formats.join(",")} />
-      <ErrorMessage>{error}</ErrorMessage>
+      <ErrorMessage>{error ? translateError(dictionary, error) : null}</ErrorMessage>
 
       <div>
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{dictionary.bookForm.title}</Label>
         <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div>
-        <Label htmlFor="author">Author</Label>
+        <Label htmlFor="author">{dictionary.bookForm.author}</Label>
         <Input id="author" name="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
       </div>
 
       <div>
-        <Label htmlFor="status">Status</Label>
+        <Label htmlFor="status">{dictionary.bookForm.status}</Label>
         <Select id="status" name="status" value={status} onChange={(e) => setStatus(e.target.value as BookStatus)}>
           {BOOK_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {STATUS_LABELS[s]}
+              {getStatusLabel(dictionary, s)}
             </option>
           ))}
         </Select>
       </div>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-zinc-700">Formats</legend>
+        <legend className="mb-2 text-sm font-medium text-zinc-700">{dictionary.bookForm.formats}</legend>
         <div className="flex flex-wrap gap-3 text-sm text-zinc-700">
           {BOOK_FORMATS.map((format) => (
             <label key={format} className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-zinc-200">
@@ -103,21 +105,21 @@ export function BookForm({ action, book, error, submitLabel, cancelHref }: Props
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <Label htmlFor="startedAt">Started</Label>
+          <Label htmlFor="startedAt">{dictionary.bookForm.started}</Label>
           <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} />
         </div>
         <div>
-          <Label htmlFor="finishedAt">Finished</Label>
+          <Label htmlFor="finishedAt">{dictionary.bookForm.finished}</Label>
           <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} />
         </div>
         <div>
-          <Label htmlFor="abandonedAt">Abandoned</Label>
+          <Label htmlFor="abandonedAt">{dictionary.bookForm.abandoned}</Label>
           <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} />
         </div>
       </div>
 
       <div>
-        <Label htmlFor="note">Note</Label>
+        <Label htmlFor="note">{dictionary.bookForm.note}</Label>
         <TextArea id="note" name="note" rows={4} value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
 
@@ -125,15 +127,28 @@ export function BookForm({ action, book, error, submitLabel, cancelHref }: Props
         <Button type="submit">{submitLabel}</Button>
         {cancelHref ? (
           <LinkButton href={cancelHref} variant="secondary">
-            Cancel
+            {dictionary.bookForm.cancel}
           </LinkButton>
         ) : null}
         {book ? (
           <Button type="button" variant="secondary" onClick={reset}>
-            Discard changes
+            {dictionary.bookForm.discardChanges}
           </Button>
         ) : null}
       </div>
     </form>
   );
+}
+
+function translateError(dictionary: Dictionary, key: string): string {
+  const parts = key.split(".");
+  let current: unknown = dictionary;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return key;
+    }
+  }
+  return typeof current === "string" ? current : key;
 }

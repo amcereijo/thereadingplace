@@ -6,6 +6,7 @@ import { LinkButton, PageSubtitle, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { countBooksByStatus, listBooks } from "@/lib/books";
 import { isBookStatus } from "@/lib/types";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function HomePage({
   searchParams,
@@ -13,9 +14,10 @@ export default async function HomePage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { userId } = await auth();
+  const { dictionary, t } = await getDictionaryForLocale();
 
   if (!userId) {
-    return <LandingPage />;
+    return <LandingPage dictionary={dictionary} />;
   }
 
   const user = await requireAppUser();
@@ -28,20 +30,20 @@ export default async function HomePage({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <PageTitle>Your shelf</PageTitle>
-          <PageSubtitle>{books.length} book{books.length === 1 ? "" : "s"}</PageSubtitle>
+          <PageTitle>{t("shelf.yourShelf")}</PageTitle>
+          <PageSubtitle>{t("shelf.booksCount", { count: books.length })}</PageSubtitle>
         </div>
         <div className="flex gap-2">
           <LinkButton href="/books/import" variant="secondary">
-            Import
+            {t("shelf.import")}
           </LinkButton>
-          <LinkButton href="/books/new">Add book</LinkButton>
+          <LinkButton href="/books/new">{t("shelf.addBook")}</LinkButton>
         </div>
       </div>
 
-      <ShelfNav basePath="" current={status ?? "all"} counts={counts} />
+      <ShelfNav basePath="" current={status ?? "all"} counts={counts} dictionary={dictionary} />
 
-      <BookList books={books} editable />
+      <BookList books={books} editable dictionary={dictionary} />
     </div>
   );
 }

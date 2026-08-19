@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "title": "The Reading Place",
+    "description": "Una estantería personal que es tuya."
+  },
+  "nav": {
+    "shelf": "Estantería",
+    "friends": "Amigos"
+  },
+  "locale": {
+    "toggle": "Idioma",
+    "en": "EN",
+    "es": "ES"
+  },
+  "landing": {
+    "tagline": "Tu compañero de lectura personal",
+    "title": "Seguimiento, compartir y descubrir tu próxima gran lectura",
+    "subtitle": "The Reading Place te ayuda a organizar tu estantería, mantenerte al día con lo que estás leyendo y compartir recomendaciones con amigos.",
+    "featureOrganize": "Organiza",
+    "featureOrganizeDescription": "Registra libros, estados, formatos, fechas y notas en un solo lugar.",
+    "featureConnect": "Conecta",
+    "featureConnectDescription": "Comparte estanterías con amigos y ve lo que están leyendo.",
+    "featureImport": "Importa",
+    "featureImportDescription": "Trae tu biblioteca de Goodreads en pocos clics.",
+    "getStarted": "Empieza gratis",
+    "signIn": "Iniciar sesión"
+  },
+  "shelf": {
+    "yourShelf": "Tu estantería",
+    "booksCount": "{count} libro",
+    "booksCount_plural": "{count} libros",
+    "addBook": "Añadir libro",
+    "import": "Importar",
+    "sort": "Ordenar",
+    "sortDateAddedDesc": "Fecha añadido (más reciente)",
+    "sortDateAddedAsc": "Fecha añadido (más antiguo)",
+    "sortTitleAsc": "Título (A–Z)",
+    "sortTitleDesc": "Título (Z–A)",
+    "sortFinishedDesc": "Terminado (más reciente)",
+    "sortFinishedAsc": "Terminado (más antiguo)",
+    "empty": "Aún no hay libros aquí.",
+    "by": "de",
+    "added": "añadido",
+    "started": "empezado",
+    "finished": "terminado",
+    "abandoned": "abandonado",
+    "notes": "Notas",
+    "status": "Estado",
+    "formats": "Formatos",
+    "dateAdded": "Fecha añadido",
+    "startedAt": "Empezado",
+    "finishedAt": "Terminado",
+    "abandonedAt": "Abandonado",
+    "note": "Nota",
+    "metadata": "Metadatos",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "details": "Detalles",
+    "showLess": "Mostrar menos",
+    "all": "Todos",
+    "more": "... y {count} más"
+  },
+  "status": {
+    "to-read": "Por leer",
+    "reading": "Leyendo",
+    "read": "Leído",
+    "abandoned": "Abandonado"
+  },
+  "bookForm": {
+    "title": "Título",
+    "author": "Autor",
+    "status": "Estado",
+    "formats": "Formatos",
+    "started": "Empezado",
+    "finished": "Terminado",
+    "abandoned": "Abandonado",
+    "note": "Nota",
+    "dates": "Fechas",
+    "added": "Añadido",
+    "metadata": "Metadatos",
+    "addField": "Añadir campo",
+    "done": "Hecho",
+    "noNote": "Aún no hay notas.",
+    "edit": "Editar",
+    "cancel": "Cancelar",
+    "discardChanges": "Descartar cambios",
+    "saveChanges": "Guardar cambios",
+    "changesSaved": "¡Cambios guardados correctamente!"
+  },
+  "newBook": {
+    "title": "Añadir un libro",
+    "subtitle": "Solo el título es obligatorio. Todo lo demás es opcional."
+  },
+  "editBook": {
+    "title": "Editar libro"
+  },
+  "friends": {
+    "title": "Amigos",
+    "subtitle": "Conecta con lectores que conoces.",
+    "yourFriends": "Tus amigos",
+    "findFriend": "Buscar un amigo…",
+    "noMatch": "Ningún amigo coincide con \"{query}\".",
+    "noneYet": "Ninguno todavía. Envía una invitación para empezar.",
+    "viewShelf": "Ver estantería",
+    "inviteByUsername": "Invitar por nombre de usuario",
+    "username": "Nombre de usuario",
+    "usernamePlaceholder": "@amigo",
+    "invite": "Invitar",
+    "inviteSent": "Invitación enviada.",
+    "newMemberLink": "Enlace para nuevos miembros",
+    "newMemberLinkDescription": "Enlace de un solo uso. Envíalo a alguien que aún no tenga una cuenta.",
+    "createNewMemberLink": "Crear enlace para nuevo miembro",
+    "oneShotLink": "Enlace de un solo uso",
+    "incomingRequests": "Solicitudes entrantes",
+    "none": "Ninguna.",
+    "outgoingRequests": "Solicitudes salientes",
+    "pending": "Pendiente",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "addToShelf": {
+    "title": "Añadir a mi estantería",
+    "description": "Elige un estado para este libro.",
+    "selectStatus": "Seleccionar estado…",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "confirming": "Confirmando…"
+  },
+  "import": {
+    "title": "Importar desde Goodreads",
+    "subtitle": "Sube tu exportación CSV de Goodreads para importar tu historial de lectura.",
+    "instructions": "Para obtener tu archivo CSV de Goodreads, inicia sesión y ve a <strong>Mis libros</strong>, luego haz clic en <strong>Importar y exportar</strong> en la barra lateral. En <strong>Exportar biblioteca</strong>, haz clic en <strong>Exportar a CSV</strong> y espera a que se descargue el archivo.",
+    "dropzoneProcessing": "Procesando…",
+    "dropzoneText": "Arrastra y suelta tu archivo CSV aquí, o",
+    "browse": "busca",
+    "progress": "Progreso",
+    "parseWarnings": "{count} advertencia(s) durante el análisis",
+    "importComplete": "¡Importación completa! {imported} libro(s) importado(s), {skipped} omitido(s) (duplicados), {errors} error(es).",
+    "goToShelf": "Ir a la estantería",
+    "csvError": "Por favor, sube un archivo CSV",
+    "parseError": "No se pudo analizar el archivo CSV. Comprueba el formato.",
+    "importError": "No se pudieron importar los libros",
+    "processError": "No se pudo procesar el archivo"
+  },
+  "claimUsername": {
+    "title": "Elige un nombre de usuario",
+    "subtitle": "Tus amigos te invitarán con este identificador.",
+    "username": "Nombre de usuario",
+    "usernamePlaceholder": "tu_usuario",
+    "usernameHint": "De 3 a 32 letras minúsculas, números o guiones bajos.",
+    "saveUsername": "Guardar nombre de usuario"
+  },
+  "invite": {
+    "invalid": "Este enlace de invitación ya no es válido.",
+    "existing": "Este enlace de invitación es solo para cuentas nuevas. Ya tienes una cuenta."
+  },
+  "errors": {
+    "titleRequired": "El título es obligatorio.",
+    "statusRequired": "Elige un estado.",
+    "bookNotFound": "Libro no encontrado.",
+    "shelfAccessDenied": "No tienes acceso a esta estantería.",
+    "usernameNotFound": "No se encontró ese nombre de usuario.",
+    "cannotInviteSelf": "No puedes invitarte a ti mismo.",
+    "alreadyFriends": "Ya sois amigos.",
+    "pendingRequest": "Ya hay una solicitud pendiente.",
+    "invalidUsername": "Usa de 3 a 32 letras, números o guiones bajos.",
+    "usernameTaken": "Ese nombre de usuario está en uso."
+  },
+  "back": "Volver"
+}

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { mintInviteLinkAction } from "@/app/actions/friends";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, Card } from "./ui";
 
-export function MintInviteLink() {
+export function MintInviteLink({ dictionary }: { dictionary: Dictionary }) {
   const [url, setUrl] = useState<string | null>(null);
 
   return (
@@ -17,11 +18,11 @@ export function MintInviteLink() {
           setUrl(result.url);
         }}
       >
-        Create new-member link
+        {dictionary.friends.createNewMemberLink}
       </Button>
       {url ? (
         <Card className="flex flex-col gap-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">One-shot link</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">{dictionary.friends.oneShotLink}</p>
           <a
             className="break-all text-sm text-teal-700 hover:text-teal-800 hover:underline"
             href={url}

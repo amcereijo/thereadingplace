@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { STATUS_LABELS } from "@/lib/types";
+import { type BookStatus, getStatusLabel } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 export function cn(...classNames: Array<string | false | null | undefined>) {
   return classNames.filter(Boolean).join(" ");
@@ -140,8 +141,8 @@ export function SuccessMessage({ children }: { children?: ReactNode }) {
   return <p className="rounded-lg bg-teal-50 px-3 py-2 text-sm font-medium text-teal-800">{children}</p>;
 }
 
-export function StatusBadge({ status }: { status: keyof typeof STATUS_LABELS }) {
-  const colors: Record<keyof typeof STATUS_LABELS, string> = {
+export function StatusBadge({ status, dictionary }: { status: BookStatus; dictionary: Dictionary }) {
+  const colors: Record<BookStatus, string> = {
     "to-read": "bg-amber-100 text-amber-800",
     reading: "bg-sky-100 text-sky-800",
     read: "bg-emerald-100 text-emerald-800",
@@ -150,7 +151,7 @@ export function StatusBadge({ status }: { status: keyof typeof STATUS_LABELS }) 
 
   return (
     <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", colors[status])}>
-      {STATUS_LABELS[status]}
+      {getStatusLabel(dictionary, status)}
     </span>
   );
 }

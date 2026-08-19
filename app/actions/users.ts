@@ -15,18 +15,18 @@ export async function claimUsernameAction(
   const username = String(formData.get("username") ?? "");
 
   if (!isValidUsername(username)) {
-    return { error: "Use 3–32 letters, numbers, or underscores." };
+    return { error: "errors.invalidUsername" };
   }
 
   const taken = await getUserByUsername(username);
   if (taken) {
-    return { error: "That username is taken." };
+    return { error: "errors.usernameTaken" };
   }
 
   try {
     await claimUsername(user.id, username);
   } catch {
-    return { error: "That username is taken." };
+    return { error: "errors.usernameTaken" };
   }
 
   if (user.pendingInviteToken) {

@@ -2,14 +2,20 @@
 
 import { useMemo, useState } from "react";
 import { type AppUser } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Card, EmptyState, Input, LinkButton, SectionTitle } from "./ui";
 
 type Props = {
   friends: AppUser[];
+  dictionary: Dictionary;
 };
 
-export function FriendsList({ friends }: Props) {
+export function FriendsList({ friends, dictionary }: Props) {
   const [query, setQuery] = useState("");
+  const t = (key: string, params?: Record<string, string | number>) => {
+    const value = dictionary[key as keyof Dictionary] as string | undefined;
+    return value ? interpolate(value, params ?? {}) : key;
+  };
 
   const filtered = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
@@ -21,13 +27,13 @@ export function FriendsList({ friends }: Props) {
 
   return (
     <section className="space-y-4">
-      <SectionTitle>Your friends</SectionTitle>
+      <SectionTitle>{dictionary.friends.yourFriends}</SectionTitle>
 
       {friends.length > 0 ? (
         <div className="max-w-md">
           <Input
             type="search"
-            placeholder="Find a friend…"
+            placeholder={dictionary.friends.findFriend}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -36,9 +42,9 @@ export function FriendsList({ friends }: Props) {
 
       {filtered.length === 0 ? (
         query ? (
-          <EmptyState>No friends match &ldquo;{query}&rdquo;.</EmptyState>
+          <EmptyState>{t("friends.noMatch", { query })}</EmptyState>
         ) : (
-          <EmptyState>None yet. Send an invite to get started.</EmptyState>
+          <EmptyState>{dictionary.friends.noneYet}</EmptyState>
         )
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,7 +64,7 @@ export function FriendsList({ friends }: Props) {
                   href={`/u/${friend.username}`}
                   className="w-full"
                 >
-                  View shelf
+                  {dictionary.friends.viewShelf}
                 </LinkButton>
               </Card>
             </li>
@@ -67,4 +73,8 @@ export function FriendsList({ friends }: Props) {
       )}
     </section>
   );
+}
+
+function interpolate(value: string, params: Record<string, string | number>): string {
+  return value.replace(/\{(\w+)\}/g, (_, name) => String(params[name] ?? `{${name}}`));
 }

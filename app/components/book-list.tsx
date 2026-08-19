@@ -2,21 +2,31 @@
 
 import { useMemo, useState } from "react";
 import { deleteBookAction } from "@/app/actions/books";
-import { type BookRecord, STATUS_LABELS } from "@/lib/types";
+import { type BookRecord } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { AddToShelfButton } from "./add-to-shelf-button";
 import { Button, Card, EmptyState, LinkButton, StatusBadge } from "./ui";
 
 type SortKey = "dateAdded" | "title" | "finishedAt";
 type SortDir = "asc" | "desc";
 
-const SORT_OPTIONS: { value: `${SortKey}-${SortDir}`; label: string }[] = [
-  { value: "dateAdded-desc", label: "Date added (newest)" },
-  { value: "dateAdded-asc", label: "Date added (oldest)" },
-  { value: "title-asc", label: "Title (A–Z)" },
-  { value: "title-desc", label: "Title (Z–A)" },
-  { value: "finishedAt-desc", label: "Finished (newest)" },
-  { value: "finishedAt-asc", label: "Finished (oldest)" },
-];
+type Props = {
+  books: BookRecord[];
+  editable?: boolean;
+  friendView?: boolean;
+  dictionary: Dictionary;
+};
+
+function useSortOptions(dictionary: Dictionary): { value: `${SortKey}-${SortDir}`; label: string }[] {
+  return [
+    { value: "dateAdded-desc", label: dictionary.shelf.sortDateAddedDesc },
+    { value: "dateAdded-asc", label: dictionary.shelf.sortDateAddedAsc },
+    { value: "title-asc", label: dictionary.shelf.sortTitleAsc },
+    { value: "title-desc", label: dictionary.shelf.sortTitleDesc },
+    { value: "finishedAt-desc", label: dictionary.shelf.sortFinishedDesc },
+    { value: "finishedAt-asc", label: dictionary.shelf.sortFinishedAsc },
+  ];
+}
 
 function compareBooks(a: BookRecord, b: BookRecord, key: SortKey, dir: SortDir): number {
   const mul = dir === "asc" ? 1 : -1;
@@ -39,19 +49,14 @@ function renderNoteHtml(note: string): string {
   const escaped = withBreaks
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/\u003e/g, "&gt;");
   return escaped.replace(/\n/g, "<br/>");
 }
 
-type Props = {
-  books: BookRecord[];
-  editable?: boolean;
-  friendView?: boolean;
-};
-
-export function BookList({ books, editable = false, friendView = false }: Props) {
+export function BookList({ books, editable = false, friendView = false, dictionary }: Props) {
   const [sort, setSort] = useState<`${SortKey}-${SortDir}`>("dateAdded-desc");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const sortOptions = useSortOptions(dictionary);
 
   const sorted = useMemo(() => {
     const [key, dir] = sort.split("-") as [SortKey, SortDir];
@@ -59,14 +64,14 @@ export function BookList({ books, editable = false, friendView = false }: Props)
   }, [books, sort]);
 
   if (books.length === 0) {
-    return <EmptyState>No books here yet.</EmptyState>;
+    return <EmptyState>{dictionary.shelf.empty}</EmptyState>;
   }
 
   return (
     <div>
       <div className="mb-4 flex items-center gap-3">
         <label htmlFor="sort" className="text-sm font-medium text-zinc-700">
-          Sort
+          {dictionary.shelf.sort}
         </label>
         <select
           id="sort"
@@ -74,7 +79,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
           onChange={(e) => setSort(e.target.value as `${SortKey}-${SortDir}`)}
           className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
         >
-          {SORT_OPTIONS.map((opt) => (
+          {sortOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
@@ -93,19 +98,19 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="text-base font-semibold text-zinc-900">
                         {book.title}
-                        {book.author ? <span className="font-normal text-zinc-600"> by {book.author}</span> : null}
+                        {book.author ? <span className="font-normal text-zinc-600"> {dictionary.shelf.by} {book.author}</span> : null}
                       </h2>
-                      <StatusBadge status={book.status} />
+                      <StatusBadge status={book.status} dictionary={dictionary} />
                     </div>
                     {book.formats.length > 0 ? (
                       <p className="mt-1 text-sm text-zinc-500">{book.formats.join(" · ")}</p>
                     ) : null}
                     <p className="mt-1 text-xs text-zinc-400">
                       {[
-                        book.dateAdded && `added ${book.dateAdded}`,
-                        book.startedAt && `started ${book.startedAt}`,
-                        book.finishedAt && `finished ${book.finishedAt}`,
-                        book.abandonedAt && `abandoned ${book.abandonedAt}`,
+                        book.dateAdded && `${dictionary.shelf.added} ${book.dateAdded}`,
+                        book.startedAt && `${dictionary.shelf.started} ${book.startedAt}`,
+                        book.finishedAt && `${dictionary.shelf.finished} ${book.finishedAt}`,
+                        book.abandonedAt && `${dictionary.shelf.abandoned} ${book.abandonedAt}`,
                       ]
                         .filter(Boolean)
                         .join(" · ")}
@@ -113,7 +118,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                     {book.note && !expanded ? (
                       <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
                         <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                          Notes
+                          {dictionary.shelf.notes}
                         </p>
                         <div
                           className="whitespace-pre-wrap"
@@ -125,12 +130,12 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                   {editable ? (
                     <div className="flex items-center gap-2">
                       <LinkButton variant="secondary" href={`/books/${book.id}/edit`}>
-                        Edit
+                        {dictionary.shelf.edit}
                       </LinkButton>
                       <form action={deleteBookAction}>
                         <input type="hidden" name="id" value={book.id} />
                         <Button type="submit" variant="danger">
-                          Delete
+                          {dictionary.shelf.delete}
                         </Button>
                       </form>
                     </div>
@@ -140,9 +145,9 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                         variant="secondary"
                         onClick={() => setExpandedId(expanded ? null : book.id)}
                       >
-                        {expanded ? "Show less" : "Details"}
+                        {expanded ? dictionary.shelf.showLess : dictionary.shelf.details}
                       </Button>
-                      <AddToShelfButton bookId={book.id} />
+                      <AddToShelfButton bookId={book.id} dictionary={dictionary} />
                     </div>
                   ) : null}
                 </div>
@@ -152,15 +157,15 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                     <dl className="space-y-3">
                       <div className="flex gap-2">
                         <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                          Status
+                          {dictionary.shelf.status}
                         </dt>
-                        <dd className="text-zinc-900">{STATUS_LABELS[book.status]}</dd>
+                        <dd className="text-zinc-900">{dictionary.status[book.status]}</dd>
                       </div>
 
                       {book.formats.length > 0 ? (
                         <div className="flex gap-2">
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Formats
+                            {dictionary.shelf.formats}
                           </dt>
                           <dd className="text-zinc-900">{book.formats.join(", ")}</dd>
                         </div>
@@ -169,7 +174,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {book.dateAdded ? (
                         <div className="flex gap-2">
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Date Added
+                            {dictionary.shelf.dateAdded}
                           </dt>
                           <dd className="text-zinc-900">{book.dateAdded}</dd>
                         </div>
@@ -178,7 +183,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {book.startedAt ? (
                         <div className="flex gap-2">
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Started
+                            {dictionary.shelf.startedAt}
                           </dt>
                           <dd className="text-zinc-900">{book.startedAt}</dd>
                         </div>
@@ -187,7 +192,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {book.finishedAt ? (
                         <div className="flex gap-2">
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Finished
+                            {dictionary.shelf.finishedAt}
                           </dt>
                           <dd className="text-zinc-900">{book.finishedAt}</dd>
                         </div>
@@ -196,7 +201,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {book.abandonedAt ? (
                         <div className="flex gap-2">
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Abandoned
+                            {dictionary.shelf.abandonedAt}
                           </dt>
                           <dd className="text-zinc-900">{book.abandonedAt}</dd>
                         </div>
@@ -205,7 +210,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {book.note ? (
                         <div>
                           <dt className="mb-1 inline-block rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Note
+                            {dictionary.shelf.note}
                           </dt>
                           <dd className="whitespace-pre-wrap text-zinc-900">{book.note}</dd>
                         </div>
@@ -214,7 +219,7 @@ export function BookList({ books, editable = false, friendView = false }: Props)
                       {Object.keys(book.metadata).length > 0 ? (
                         <div>
                           <dt className="mb-2 inline-block rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                            Metadata
+                            {dictionary.shelf.metadata}
                           </dt>
                           <dd className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
                             <dl className="grid grid-cols-[minmax(0,auto),1fr] gap-x-4 gap-y-2 text-sm">
@@ -243,3 +248,5 @@ export function BookList({ books, editable = false, friendView = false }: Props)
     </div>
   );
 }
+
+

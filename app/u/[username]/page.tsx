@@ -7,6 +7,7 @@ import { countBooksByStatus, listBooks } from "@/lib/books";
 import { canReadShelf } from "@/lib/friendships";
 import { isBookStatus } from "@/lib/types";
 import { getUserByUsername } from "@/lib/users";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function FriendShelfPage({
   params,
@@ -18,6 +19,7 @@ export default async function FriendShelfPage({
   const viewer = await requireAppUser();
   const { username } = await params;
   const owner = await getUserByUsername(username);
+  const { dictionary, t } = await getDictionaryForLocale();
   if (!owner) notFound();
 
   const allowed = await canReadShelf(viewer.id, owner.id);
@@ -25,7 +27,7 @@ export default async function FriendShelfPage({
     return (
       <Card className="max-w-lg">
         <PageTitle>@{owner.username}</PageTitle>
-        <p className="mt-2 text-sm text-zinc-600">This shelf is private.</p>
+        <p className="mt-2 text-sm text-zinc-600">{dictionary.shelf.empty}</p>
       </Card>
     );
   }
@@ -39,11 +41,11 @@ export default async function FriendShelfPage({
 
   return (
     <div>
-      <PageTitle>@{owner.username}&apos;s shelf</PageTitle>
+      <PageTitle>@{owner.username}&apos;s {t("nav.shelf").toLowerCase()}</PageTitle>
       <div className="mt-6">
-        <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} counts={counts} />
+        <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} counts={counts} dictionary={dictionary} />
       </div>
-      <BookList books={books} friendView />
+      <BookList books={books} friendView dictionary={dictionary} />
     </div>
   );
 }

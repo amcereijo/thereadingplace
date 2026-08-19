@@ -15,6 +15,17 @@ export function isBookStatus(value: string): value is BookStatus {
   return (BOOK_STATUSES as readonly string[]).includes(value);
 }
 
+export function getStatusLabel(
+  dictionary: { status: Record<BookStatus, string> },
+  status: BookStatus,
+): string {
+  return dictionary.status[status];
+}
+
+export function getStatusLabelKey(status: BookStatus): string {
+  return `status.${status}`;
+}
+
 export function isBookFormat(value: string): value is BookFormat {
   return (BOOK_FORMATS as readonly string[]).includes(value);
 }

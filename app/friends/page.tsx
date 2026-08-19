@@ -9,9 +9,11 @@ import {
   listIncomingPending,
   listOutgoingPending,
 } from "@/lib/friendships";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function FriendsPage() {
   const user = await requireAppUser();
+  const { dictionary, t } = await getDictionaryForLocale();
   const [incoming, outgoing, friends] = await Promise.all([
     listIncomingPending(user.id),
     listOutgoingPending(user.id),
@@ -21,29 +23,29 @@ export default async function FriendsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <PageTitle>Friends</PageTitle>
-        <PageSubtitle>Connect with readers you know.</PageSubtitle>
+        <PageTitle>{t("friends.title")}</PageTitle>
+        <PageSubtitle>{t("friends.subtitle")}</PageSubtitle>
       </div>
 
-      <FriendsList friends={friends} />
+      <FriendsList friends={friends} dictionary={dictionary} />
 
       <section className="space-y-3">
-        <SectionTitle>Invite by username</SectionTitle>
-        <InviteUsernameForm />
+        <SectionTitle>{t("friends.inviteByUsername")}</SectionTitle>
+        <InviteUsernameForm dictionary={dictionary} />
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>New-member link</SectionTitle>
+        <SectionTitle>{t("friends.newMemberLink")}</SectionTitle>
         <p className="text-sm text-zinc-600">
-          One-shot link. Send it to someone who does not have an account yet.
+          {t("friends.newMemberLinkDescription")}
         </p>
-        <MintInviteLink />
+        <MintInviteLink dictionary={dictionary} />
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Incoming requests</SectionTitle>
+        <SectionTitle>{t("friends.incomingRequests")}</SectionTitle>
         {incoming.length === 0 ? (
-          <p className="text-sm text-zinc-500">None.</p>
+          <p className="text-sm text-zinc-500">{t("friends.none")}</p>
         ) : (
           <ul className="space-y-2">
             {incoming.map((row) => (
@@ -53,12 +55,12 @@ export default async function FriendsPage() {
                   <div className="flex gap-2">
                     <form action={acceptInviteAction}>
                       <input type="hidden" name="id" value={row.id} />
-                      <Button type="submit">Accept</Button>
+                      <Button type="submit">{t("friends.accept")}</Button>
                     </form>
                     <form action={declineInviteAction}>
                       <input type="hidden" name="id" value={row.id} />
                       <Button type="submit" variant="secondary">
-                        Decline
+                        {t("friends.decline")}
                       </Button>
                     </form>
                   </div>
@@ -70,15 +72,15 @@ export default async function FriendsPage() {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Outgoing requests</SectionTitle>
+        <SectionTitle>{t("friends.outgoingRequests")}</SectionTitle>
         {outgoing.length === 0 ? (
-          <p className="text-sm text-zinc-500">None.</p>
+          <p className="text-sm text-zinc-500">{t("friends.none")}</p>
         ) : (
           <ul className="space-y-2">
             {outgoing.map((row) => (
               <li key={row.id} className="flex items-center gap-2 text-sm text-zinc-700">
                 <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-                  Pending
+                  {t("friends.pending")}
                 </span>
                 <span className="font-medium">@{row.addresseeUsername}</span>
               </li>

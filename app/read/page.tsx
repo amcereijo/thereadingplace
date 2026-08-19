@@ -3,9 +3,11 @@ import { ShelfNav } from "@/app/components/shelf-nav";
 import { LinkButton, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { countBooksByStatus, listBooks } from "@/lib/books";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function ReadPage() {
   const user = await requireAppUser();
+  const { dictionary, t } = await getDictionaryForLocale();
   const [books, counts] = await Promise.all([
     listBooks(user.id, "read"),
     countBooksByStatus(user.id),
@@ -13,11 +15,11 @@ export default async function ReadPage() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <PageTitle>Read</PageTitle>
-        <LinkButton href="/books/new">Add book</LinkButton>
+        <PageTitle>{t("status.read")}</PageTitle>
+        <LinkButton href="/books/new">{t("shelf.addBook")}</LinkButton>
       </div>
-      <ShelfNav basePath="" current="read" counts={counts} />
-      <BookList books={books} editable />
+      <ShelfNav basePath="" current="read" counts={counts} dictionary={dictionary} />
+      <BookList books={books} editable dictionary={dictionary} />
     </div>
   );
 }

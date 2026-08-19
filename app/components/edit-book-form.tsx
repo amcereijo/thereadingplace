@@ -3,7 +3,8 @@
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateBookAction } from "@/app/actions/books";
-import { BOOK_FORMATS, BOOK_STATUSES, STATUS_LABELS, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
+import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 
 type MetaEntry = { key: string; value: string };
@@ -49,7 +50,7 @@ function computeDatesOnStatusChange(
   }
 }
 
-export function EditBookForm({ book }: { book: BookRecord }) {
+export function EditBookForm({ book, dictionary }: { book: BookRecord; dictionary: Dictionary }) {
   const router = useRouter();
   const [state, action] = useActionState(updateBookAction, { error: null as string | null, success: false as boolean });
 
@@ -133,7 +134,7 @@ export function EditBookForm({ book }: { book: BookRecord }) {
       <input type="hidden" name="formats" value={formats.join(",")} />
       <input type="hidden" name="dateAdded" value={dateAdded} />
       <input type="hidden" name="metadata" value={JSON.stringify(recordFromEntries(metaEntries))} />
-      <ErrorMessage>{state?.error}</ErrorMessage>
+      <ErrorMessage>{state?.error ? translateError(dictionary, state.error) : null}</ErrorMessage>
 
       <div>
         <Label htmlFor="title">Title</Label>
@@ -150,14 +151,14 @@ export function EditBookForm({ book }: { book: BookRecord }) {
         <Select id="status" name="status" value={status} onChange={(e) => handleStatusChange(e.target.value as BookStatus)}>
           {BOOK_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {STATUS_LABELS[s]}
+              {getStatusLabel(dictionary, s)}
             </option>
           ))}
         </Select>
       </div>
 
       <fieldset>
-        <legend className="mb-3 text-base font-semibold text-zinc-900">Formats</legend>
+        <legend className="mb-3 text-base font-semibold text-zinc-900">{dictionary.bookForm.formats}</legend>
         <div className="flex flex-wrap gap-3 text-sm text-zinc-700">
           {BOOK_FORMATS.map((format) => (
             <label key={format} className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-zinc-200">
@@ -174,34 +175,34 @@ export function EditBookForm({ book }: { book: BookRecord }) {
       </fieldset>
 
       <fieldset>
-        <legend className="mb-3 text-base font-semibold text-zinc-900">Dates</legend>
+        <legend className="mb-3 text-base font-semibold text-zinc-900">{dictionary.bookForm.dates}</legend>
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <label htmlFor="dateAdded" className="w-24 shrink-0 text-sm font-medium text-zinc-700">Added</label>
+            <label htmlFor="dateAdded" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.added}</label>
             <Input id="dateAdded" type="date" name="dateAdded" value={dateAdded} onChange={(e) => setDateAdded(e.target.value)} className="flex-1" />
           </div>
           <div className="flex items-center gap-3">
-            <label htmlFor="startedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">Started</label>
+            <label htmlFor="startedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.started}</label>
             <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} className="flex-1" />
           </div>
           <div className="flex items-center gap-3">
-            <label htmlFor="finishedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">Finished</label>
+            <label htmlFor="finishedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.finished}</label>
             <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} className="flex-1" />
           </div>
           <div className="flex items-center gap-3">
-            <label htmlFor="abandonedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">Abandoned</label>
+            <label htmlFor="abandonedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.abandoned}</label>
             <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} className="flex-1" />
           </div>
         </div>
       </fieldset>
 
       <div>
-        <Label htmlFor="note">Note</Label>
+        <Label htmlFor="note">{dictionary.bookForm.note}</Label>
         {editingNote ? (
           <>
             <TextArea id="note" name="note" rows={4} value={note} onChange={(e) => setNote(e.target.value)} />
             <Button type="button" variant="secondary" className="mt-2" onClick={() => setEditingNote(false)}>
-              Done
+              {dictionary.bookForm.done}
             </Button>
           </>
         ) : (
@@ -219,28 +220,28 @@ export function EditBookForm({ book }: { book: BookRecord }) {
                 }}
               />
             ) : (
-              <p className="text-sm text-zinc-400">No note yet.</p>
+              <p className="text-sm text-zinc-400">{dictionary.bookForm.noNote}</p>
             )}
             <Button type="button" variant="secondary" className="mt-2" onClick={() => setEditingNote(true)}>
-              Edit
+              {dictionary.bookForm.edit}
             </Button>
           </>
         )}
       </div>
 
       <fieldset>
-        <legend className="mb-3 text-base font-semibold text-zinc-900">Metadata</legend>
+        <legend className="mb-3 text-base font-semibold text-zinc-900">{dictionary.bookForm.metadata}</legend>
         <div className="space-y-2">
           {metaEntries.map((entry, i) => (
             <div key={i} className="flex items-center gap-2">
               <Input
-                placeholder="Key"
+                placeholder={dictionary.bookForm.metadata}
                 value={entry.key}
                 onChange={(e) => updateMetaEntry(i, "key", e.target.value)}
                 className="flex-1"
               />
               <Input
-                placeholder="Value"
+                placeholder={dictionary.bookForm.metadata}
                 value={entry.value}
                 onChange={(e) => updateMetaEntry(i, "value", e.target.value)}
                 className="flex-1"
@@ -252,17 +253,30 @@ export function EditBookForm({ book }: { book: BookRecord }) {
           ))}
         </div>
         <Button type="button" variant="secondary" className="mt-2" onClick={addMetaEntry}>
-          Add field
+          {dictionary.bookForm.addField}
         </Button>
       </fieldset>
 
       <div className="flex items-center gap-3">
-        <Button type="submit">Save changes</Button>
+        <Button type="submit">{dictionary.bookForm.saveChanges}</Button>
         <Button type="button" variant="secondary" onClick={reset}>
-          Discard changes
+          {dictionary.bookForm.discardChanges}
         </Button>
-        {state?.success && <SuccessMessage>Changes saved successfully!</SuccessMessage>}
+        {state?.success && <SuccessMessage>{dictionary.bookForm.changesSaved}</SuccessMessage>}
       </div>
     </form>
   );
+}
+
+function translateError(dictionary: Dictionary, key: string): string {
+  const parts = key.split(".");
+  let current: unknown = dictionary;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return key;
+    }
+  }
+  return typeof current === "string" ? current : key;
 }

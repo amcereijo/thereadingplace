@@ -1,24 +1,21 @@
 import { GoodreadsImporter } from "@/app/components/goodreads-importer";
 import { PageSubtitle, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
+import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function ImportPage() {
   await requireAppUser();
+  const { dictionary, t } = await getDictionaryForLocale();
   return (
     <div>
-      <PageTitle>Import from Goodreads</PageTitle>
-      <PageSubtitle>
-        Upload your Goodreads CSV export to import your reading history.
-      </PageSubtitle>
-      <p className="mt-4 max-w-2xl text-sm text-zinc-600">
-        To get your CSV file from Goodreads, sign in and go to{" "}
-        <strong>My Books</strong>, then click{" "}
-        <strong>Import and export</strong> in the left sidebar. Under{" "}
-        <strong>Export Library</strong>, click <strong>Export to CSV</strong>{" "}
-        and wait for the file to download.
-      </p>
+      <PageTitle>{t("import.title")}</PageTitle>
+      <PageSubtitle>{t("import.subtitle")}</PageSubtitle>
+      <p
+        className="mt-4 max-w-2xl text-sm text-zinc-600"
+        dangerouslySetInnerHTML={{ __html: t("import.instructions") }}
+      />
       <div className="mt-6">
-        <GoodreadsImporter />
+        <GoodreadsImporter dictionary={dictionary} />
       </div>
     </div>
   );

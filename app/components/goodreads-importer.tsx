@@ -4,10 +4,12 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { parseGoodreadsCsv, type ImportResult } from "@/lib/goodreads";
 import { importGoodreadsAction } from "@/app/actions/import";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Card, ErrorMessage, SuccessMessage } from "./ui";
 
 interface GoodreadsImporterProps {
   onImportComplete?: () => void;
+  dictionary: Dictionary;
 }
 
 interface ImportProgress {
@@ -18,7 +20,7 @@ interface ImportProgress {
   errors: number;
 }
 
-export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) {
+export function GoodreadsImporter({ onImportComplete, dictionary }: GoodreadsImporterProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState<ImportProgress | null>(null);
@@ -32,7 +34,7 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
       setProgress(null);
 
       if (!file.name.endsWith(".csv")) {
-        setError("Please upload a CSV file");
+        setError(dictionary.import.csvError);
         return;
       }
 
@@ -44,7 +46,7 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
         setResult(parseResult);
 
         if (parseResult.errors.length > 0 && parseResult.parsedBooks.length === 0) {
-          setError("Failed to parse CSV file. Please check the format.");
+          setError(dictionary.import.parseError);
           setIsProcessing(false);
           return;
         }
@@ -52,7 +54,7 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
         const importResult = await importGoodreadsAction(text);
 
         if (!importResult.success) {
-          setError(importResult.error || "Failed to import books");
+          setError(importResult.error ? translateError(dictionary, importResult.error) : dictionary.import.importError);
           setIsProcessing(false);
           return;
         }
@@ -63,12 +65,12 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
 
         onImportComplete?.();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to process file");
+        setError(e instanceof Error ? e.message : dictionary.import.processError);
       } finally {
         setIsProcessing(false);
       }
     },
-    [onImportComplete]
+    [onImportComplete, dictionary]
   );
 
   const handleDrop = useCallback(
@@ -109,10 +111,10 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold text-zinc-900">
-            Import from Goodreads
+            {dictionary.import.title}
           </h3>
           <p className="mt-1 text-sm text-zinc-600">
-            Upload your Goodreads CSV export to import your reading history.
+            {dictionary.import.subtitle}
           </p>
         </div>
 
@@ -129,13 +131,13 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
           <div className="space-y-2">
             <p className="text-sm text-zinc-600">
               {isProcessing
-                ? "Processing..."
-                : "Drag and drop your CSV file here, or"}
+                ? dictionary.import.dropzoneProcessing
+                : dictionary.import.dropzoneText}
             </p>
             {!isProcessing && (
               <label className="inline-block cursor-pointer">
                 <span className="text-sm font-medium text-teal-700 hover:text-teal-800">
-                  browse
+                  {dictionary.import.browse}
                 </span>
                 <input
                   type="file"
@@ -153,7 +155,7 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
         {progress && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-zinc-600">
-              <span>Progress</span>
+              <span>{dictionary.import.progress}</span>
               <span>
                 {progress.processed} / {progress.total}
               </span>
@@ -172,14 +174,14 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
         {result && result.errors.length > 0 && (
           <div className="rounded-lg bg-amber-50 p-3">
             <p className="text-sm font-medium text-amber-800">
-              {result.errors.length} warning(s) during parse
+              {dictionary.import.parseWarnings.replace("{count}", String(result.errors.length))}
             </p>
             <ul className="mt-1 max-h-32 overflow-y-auto text-xs text-amber-700">
               {result.errors.slice(0, 5).map((err, i) => (
                 <li key={i}>{err}</li>
               ))}
               {result.errors.length > 5 && (
-                <li>... and {result.errors.length - 5} more</li>
+                <li>{dictionary.shelf.more.replace("{count}", String(result.errors.length - 5))}</li>
               )}
             </ul>
           </div>
@@ -188,18 +190,33 @@ export function GoodreadsImporter({ onImportComplete }: GoodreadsImporterProps) 
         {progress && progress.processed === progress.total && (
           <div className="space-y-3">
             <SuccessMessage>
-              Import complete! {progress.imported} book(s) imported,{" "}
-              {progress.skipped} skipped (duplicates), {progress.errors} error(s).
+              {dictionary.import.importComplete
+                .replace("{imported}", String(progress.imported))
+                .replace("{skipped}", String(progress.skipped))
+                .replace("{errors}", String(progress.errors))}
             </SuccessMessage>
             <Link
               href="/"
               className="inline-flex items-center justify-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1"
             >
-              Go to shelf
+              {dictionary.import.goToShelf}
             </Link>
           </div>
         )}
       </div>
     </Card>
   );
+}
+
+function translateError(dictionary: Dictionary, key: string): string {
+  const parts = key.split(".");
+  let current: unknown = dictionary;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return key;
+    }
+  }
+  return typeof current === "string" ? current : key;
 }

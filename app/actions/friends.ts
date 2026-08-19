@@ -22,23 +22,23 @@ export async function inviteByUsernameAction(
   const target = await getUserByUsername(username);
 
   if (!target) {
-    return { error: "That username was not found.", ok: null };
+    return { error: "errors.usernameNotFound", ok: null };
   }
   if (target.id === user.id) {
-    return { error: "You cannot invite yourself.", ok: null };
+    return { error: "errors.cannotInviteSelf", ok: null };
   }
 
   const existing = await getFriendshipBetween(user.id, target.id);
   if (existing?.status === "accepted") {
-    return { error: "You are already friends.", ok: null };
+    return { error: "errors.alreadyFriends", ok: null };
   }
   if (existing?.status === "pending") {
-    return { error: "A request is already pending.", ok: null };
+    return { error: "errors.pendingRequest", ok: null };
   }
 
   await createUsernameInvite(user.id, target.id);
   revalidatePath("/friends");
-  return { error: null, ok: "Invite sent." };
+  return { error: null, ok: "friends.inviteSent" };
 }
 
 export async function acceptInviteAction(formData: FormData) {
