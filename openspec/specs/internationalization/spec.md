@@ -1,0 +1,62 @@
+## Purpose
+
+Provides Spanish and English language support for all user-facing text in The Reading Place, with a manual toggle and locale persistence via cookie.
+
+## Requirements
+
+### Requirement: Supported locales
+The system SHALL support two locales: `en` (English) and `es` (Spanish). All supported locales SHALL be available for selection at any time.
+
+#### Scenario: Default locale on first visit
+- **WHEN** a visitor opens the app and has no locale cookie
+- **THEN** the system uses the browser's `Accept-Language` header to choose `es` if Spanish is preferred, otherwise `en`
+- **AND** the system sets the chosen locale in a cookie
+
+#### Scenario: Manual locale selection
+- **WHEN** a signed-in person clicks the language toggle
+- **THEN** the system switches the active locale to the other supported locale
+- **AND** the system updates the cookie
+
+### Requirement: Language toggle is always visible to signed-in users
+The system SHALL display a single language toggle (`EN | ES`) in the application header when the user is signed in. The active locale SHALL be visually distinct.
+
+#### Scenario: Toggle shows active locale
+- **WHEN** the active locale is `en`
+- **THEN** the toggle highlights `EN` and shows `ES` as available
+
+#### Scenario: Toggle switches locale
+- **WHEN** a signed-in person clicks `ES`
+- **THEN** the system updates all user-facing text to Spanish
+
+### Requirement: All user-facing text is translated
+The system SHALL translate all user-facing text based on the active locale. This includes navigation labels, page titles, buttons, form labels, status labels, empty states, server action error messages, and landing page content.
+
+#### Scenario: Navigation in Spanish
+- **WHEN** the active locale is `es`
+- **THEN** the navigation shows "Estantería" and "Amigos" instead of "Shelf" and "Friends"
+
+#### Scenario: Status labels in Spanish
+- **WHEN** the active locale is `es`
+- **THEN** status labels show "Por leer", "Leyendo", "Leído", and "Abandonado"
+
+#### Scenario: Form labels in Spanish
+- **WHEN** the active locale is `es`
+- **THEN** form labels such as "Title", "Author", "Note", "Started", "Finished", and "Abandoned" are shown in Spanish
+
+#### Scenario: Server action errors are translated
+- **WHEN** a server action returns an error message and the active locale is `es`
+- **THEN** the system displays the error message in Spanish
+
+### Requirement: URLs stay the same across locales
+The system SHALL keep URLs unchanged when switching locales. A Spanish-speaking user and an English-speaking user SHALL share the same routes such as `/`, `/friends`, and `/reading`.
+
+#### Scenario: Switch language on same page
+- **WHEN** a user is on `/friends` and switches from `en` to `es`
+- **THEN** the system remains on `/friends` and shows the page in Spanish
+
+### Requirement: Server components render translated text
+The system SHALL allow server components to render text in the active locale on the first request without requiring client-side JavaScript for language selection.
+
+#### Scenario: First request in Spanish
+- **WHEN** a request with locale cookie `es` arrives
+- **THEN** server-rendered HTML contains Spanish text
