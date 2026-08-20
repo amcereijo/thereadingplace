@@ -170,7 +170,51 @@
     "alreadyFriends": "Ya sois amigos.",
     "pendingRequest": "Ya hay una solicitud pendiente.",
     "invalidUsername": "Usa de 3 a 32 letras, números o guiones bajos.",
-    "usernameTaken": "Ese nombre de usuario está en uso."
+    "usernameTaken": "Ese nombre de usuario está en uso.",
+    "receiverRequired": "Elige un amigo al que recomendar.",
+    "cannotRecommendSelf": "No puedes recomendarte un libro a ti mismo.",
+    "notFriends": "Solo puedes recomendar a amigos aceptados.",
+    "recommendationNotFound": "Recomendación no encontrada."
   },
-  "back": "Volver"
+  "back": "Volver",
+  "recommendations": {
+    "title": "Recomendaciones",
+    "subtitle": "Libros que tus amigos creen que te gustarían.",
+    "received": "Recibidas",
+    "sent": "Enviadas",
+    "empty": "Aún no hay recomendaciones.",
+    "noReceived": "No has recibido recomendaciones.",
+    "noSent": "Aún no has recomendado ningún libro.",
+    "from": "De @{username}",
+    "to": "Para @{username}",
+    "message": "Mensaje",
+    "noMessage": "Sin mensaje personal.",
+    "sentOn": "Enviado el {date}",
+    "reply": "Añadir una respuesta (opcional)",
+    "replyPlaceholder": "Di algo a @{username}…",
+    "responseFrom": "Respuesta de @{username}",
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Aceptada",
+      "dismissed": "Descartada"
+    },
+    "recommend": "Recomendar",
+    "panelTitle": "Recomendar este libro",
+    "panelDescription": "Elige un amigo aceptado y añade una nota personal opcional.",
+    "pickFriend": "Elige un amigo",
+    "noFriends": "Aún no tienes amigos aceptados a quienes recomendar.",
+    "messagePlaceholder": "Añade una nota personal (opcional)…",
+    "send": "Enviar recomendación",
+    "sending": "Enviando…",
+    "cancel": "Cancelar",
+    "sent": "Recomendación enviada.",
+    "accept": "Aceptar",
+    "accepting": "Aceptando…",
+    "acceptTitle": "Aceptar recomendación",
+    "acceptDescription": "Elige un estado para este libro en tu estantería.",
+    "dismiss": "Descartar",
+    "dismissing": "Descartando…",
+    "dismissTitle": "Descartar recomendación",
+    "dismissDescription": "Puedes añadir una respuesta opcional para @{username}."
+  }
 }

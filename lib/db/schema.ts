@@ -52,3 +52,26 @@ export const inviteLinks = sqliteTable("invite_links", {
   usedAt: text("used_at"),
   createdAt: text("created_at").notNull(),
 });
+
+export const recommendations = sqliteTable("recommendations", {
+  id: text("id").primaryKey(),
+  senderId: text("sender_id")
+    .notNull()
+    .references(() => users.id),
+  receiverId: text("receiver_id")
+    .notNull()
+    .references(() => users.id),
+  bookId: text("book_id").references(() => books.id, { onDelete: "set null" }),
+  title: text("title").notNull(),
+  author: text("author"),
+  formatsJson: text("formats_json").notNull().default("[]"),
+  note: text("note"),
+  message: text("message"),
+  reply: text("reply"),
+  replyAt: text("reply_at"),
+  status: text("status").notNull(),
+  sentAt: text("sent_at").notNull(),
+  seenAt: text("seen_at"),
+  acceptedAt: text("accepted_at"),
+  dismissedAt: text("dismissed_at"),
+});

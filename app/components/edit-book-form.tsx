@@ -3,9 +3,10 @@
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateBookAction } from "@/app/actions/books";
-import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
+import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type AppUser, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
+import { RecommendPanel } from "./recommend-panel";
 
 type MetaEntry = { key: string; value: string };
 
@@ -50,7 +51,15 @@ function computeDatesOnStatusChange(
   }
 }
 
-export function EditBookForm({ book, dictionary }: { book: BookRecord; dictionary: Dictionary }) {
+export function EditBookForm({
+  book,
+  dictionary,
+  recommendFriends,
+}: {
+  book: BookRecord;
+  dictionary: Dictionary;
+  recommendFriends?: AppUser[];
+}) {
   const router = useRouter();
   const [state, action] = useActionState(updateBookAction, { error: null as string | null, success: false as boolean });
 
@@ -262,6 +271,13 @@ export function EditBookForm({ book, dictionary }: { book: BookRecord; dictionar
         <Button type="button" variant="secondary" onClick={reset}>
           {dictionary.bookForm.discardChanges}
         </Button>
+        {recommendFriends ? (
+          <RecommendPanel
+            bookId={book.id}
+            friends={recommendFriends}
+            dictionary={dictionary}
+          />
+        ) : null}
         {state?.success && <SuccessMessage>{dictionary.bookForm.changesSaved}</SuccessMessage>}
       </div>
     </form>

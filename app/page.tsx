@@ -5,6 +5,8 @@ import { ShelfNav } from "@/app/components/shelf-nav";
 import { LinkButton, PageSubtitle, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { countBooksByStatus, listBooks } from "@/lib/books";
+import { listAcceptedFriends } from "@/lib/friendships";
+import { countRecommendationsForUser, countUnreadReceived } from "@/lib/recommendations";
 import { isBookStatus } from "@/lib/types";
 import { getDictionaryForLocale } from "@/lib/i18n/server";
 
@@ -23,8 +25,14 @@ export default async function HomePage({
   const user = await requireAppUser();
   const params = await searchParams;
   const status = params.status && isBookStatus(params.status) ? params.status : undefined;
-  const books = await listBooks(user.id, status);
-  const counts = await countBooksByStatus(user.id);
+  const [books, counts, friends, recCount, unreadCount] = await Promise.all([
+    listBooks(user.id, status),
+    countBooksByStatus(user.id),
+    listAcceptedFriends(user.id),
+    countRecommendationsForUser(user.id),
+    countUnreadReceived(user.id),
+  ]);
+  const showRecommendations = recCount > 0;
 
   return (
     <div>
@@ -41,9 +49,16 @@ export default async function HomePage({
         </div>
       </div>
 
-      <ShelfNav basePath="" current={status ?? "all"} counts={counts} dictionary={dictionary} />
+      <ShelfNav
+        basePath=""
+        current={status ?? "all"}
+        counts={counts}
+        dictionary={dictionary}
+        showRecommendations={showRecommendations}
+        recommendationsUnreadCount={unreadCount}
+      />
 
-      <BookList books={books} editable dictionary={dictionary} />
+      <BookList books={books} editable dictionary={dictionary} recommendFriends={friends} />
     </div>
   );
 }

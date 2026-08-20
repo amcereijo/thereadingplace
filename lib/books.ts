@@ -229,6 +229,36 @@ export async function copyBook(
   return id;
 }
 
+export async function copyBookFromSnapshot(input: {
+  ownerId: string;
+  title: string;
+  author: string | null;
+  formats: BookFormat[];
+  note: string | null;
+  status: BookStatus;
+}) {
+  const timestamp = nowIso();
+  const id = crypto.randomUUID();
+  const dates = computeDatesForStatus(input.status, "to-read", timestamp.slice(0, 10));
+  await db.insert(books).values({
+    id,
+    ownerId: input.ownerId,
+    title: input.title,
+    status: input.status,
+    formatsJson: JSON.stringify(input.formats),
+    startedAt: dates.startedAt,
+    finishedAt: dates.finishedAt,
+    abandonedAt: dates.abandonedAt,
+    dateAdded: timestamp.slice(0, 10),
+    note: input.note,
+    author: input.author,
+    metadataJson: JSON.stringify({}),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
+  return id;
+}
+
 export type BookCounts = { all: number } & Record<BookStatus, number>;
 
 export async function countBooksByStatus(ownerId: string): Promise<BookCounts> {

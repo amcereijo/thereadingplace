@@ -30,6 +30,13 @@ export function isBookFormat(value: string): value is BookFormat {
   return (BOOK_FORMATS as readonly string[]).includes(value);
 }
 
+export const RECOMMENDATION_STATUSES = ["pending", "accepted", "dismissed"] as const;
+export type RecommendationStatus = (typeof RECOMMENDATION_STATUSES)[number];
+
+export function isRecommendationStatus(value: string): value is RecommendationStatus {
+  return (RECOMMENDATION_STATUSES as readonly string[]).includes(value);
+}
+
 export type AppUser = {
   id: string;
   clerkId: string;
@@ -53,4 +60,23 @@ export type BookRecord = {
   metadata: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
+};
+
+export type RecommendationRecord = {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  bookId: string | null;
+  title: string;
+  author: string | null;
+  formats: BookFormat[];
+  note: string | null;
+  message: string | null;
+  reply: string | null;
+  replyAt: string | null;
+  status: RecommendationStatus;
+  sentAt: string;
+  seenAt: string | null;
+  acceptedAt: string | null;
+  dismissedAt: string | null;
 };

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { INVITE_COOKIE } from "./auth-constants";
 import { db } from "./db";
 import { users } from "./db/schema";
@@ -39,6 +39,15 @@ export async function getUserByUsername(username: string) {
     .where(eq(users.username, normalizeUsername(username)))
     .limit(1);
   return row ? toUser(row) : null;
+}
+
+export async function listUsernamesById(ids: string[]): Promise<Map<string, string>> {
+  if (ids.length === 0) return new Map();
+  const rows = await db
+    .select({ id: users.id, username: users.username })
+    .from(users)
+    .where(inArray(users.id, ids));
+  return new Map(rows.filter((r) => r.username).map((r) => [r.id, r.username as string]));
 }
 
 export async function ensureUser(clerkId: string) {

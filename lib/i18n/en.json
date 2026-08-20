@@ -170,7 +170,51 @@
     "alreadyFriends": "You are already friends.",
     "pendingRequest": "A request is already pending.",
     "invalidUsername": "Use 3–32 letters, numbers, or underscores.",
-    "usernameTaken": "That username is taken."
+    "usernameTaken": "That username is taken.",
+    "receiverRequired": "Pick a friend to recommend to.",
+    "cannotRecommendSelf": "You cannot recommend a book to yourself.",
+    "notFriends": "You can only recommend to accepted friends.",
+    "recommendationNotFound": "Recommendation not found."
   },
-  "back": "Go back"
+  "back": "Go back",
+  "recommendations": {
+    "title": "Recommendations",
+    "subtitle": "Books your friends think you would like.",
+    "received": "Received",
+    "sent": "Sent",
+    "empty": "No recommendations yet.",
+    "noReceived": "No recommendations received.",
+    "noSent": "You have not recommended any books yet.",
+    "from": "From @{username}",
+    "to": "To @{username}",
+    "message": "Message",
+    "noMessage": "No personal message.",
+    "sentOn": "Sent {date}",
+    "reply": "Add a response (optional)",
+    "replyPlaceholder": "Say something back to @{username}…",
+    "responseFrom": "Response from @{username}",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "dismissed": "Dismissed"
+    },
+    "recommend": "Recommend",
+    "panelTitle": "Recommend this book",
+    "panelDescription": "Pick an accepted friend and add an optional personal note.",
+    "pickFriend": "Pick a friend",
+    "noFriends": "You do not have any accepted friends to recommend to yet.",
+    "messagePlaceholder": "Add a personal note (optional)…",
+    "send": "Send recommendation",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "sent": "Recommendation sent.",
+    "accept": "Accept",
+    "accepting": "Accepting…",
+    "acceptTitle": "Accept recommendation",
+    "acceptDescription": "Choose a status for this book on your shelf.",
+    "dismiss": "Dismiss",
+    "dismissing": "Dismissing…",
+    "dismissTitle": "Dismiss recommendation",
+    "dismissDescription": "You can add an optional response for @{username}."
+  }
 }

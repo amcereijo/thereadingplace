@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { deleteBookAction } from "@/app/actions/books";
-import { type BookRecord } from "@/lib/types";
+import { type AppUser, type BookRecord } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { AddToShelfButton } from "./add-to-shelf-button";
+import { RecommendPanel } from "./recommend-panel";
 import { Button, Card, EmptyState, LinkButton, StatusBadge } from "./ui";
 
 type SortKey = "dateAdded" | "title" | "finishedAt";
@@ -15,6 +16,7 @@ type Props = {
   editable?: boolean;
   friendView?: boolean;
   dictionary: Dictionary;
+  recommendFriends?: AppUser[];
 };
 
 function useSortOptions(dictionary: Dictionary): { value: `${SortKey}-${SortDir}`; label: string }[] {
@@ -53,7 +55,13 @@ function renderNoteHtml(note: string): string {
   return escaped.replace(/\n/g, "<br/>");
 }
 
-export function BookList({ books, editable = false, friendView = false, dictionary }: Props) {
+export function BookList({
+  books,
+  editable = false,
+  friendView = false,
+  dictionary,
+  recommendFriends,
+}: Props) {
   const [sort, setSort] = useState<`${SortKey}-${SortDir}`>("dateAdded-desc");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const sortOptions = useSortOptions(dictionary);
@@ -132,6 +140,13 @@ export function BookList({ books, editable = false, friendView = false, dictiona
                       <LinkButton variant="secondary" href={`/books/${book.id}/edit`}>
                         {dictionary.shelf.edit}
                       </LinkButton>
+                      {recommendFriends ? (
+                        <RecommendPanel
+                          bookId={book.id}
+                          friends={recommendFriends}
+                          dictionary={dictionary}
+                        />
+                      ) : null}
                       <form action={deleteBookAction}>
                         <input type="hidden" name="id" value={book.id} />
                         <Button type="submit" variant="danger">
