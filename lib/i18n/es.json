@@ -91,6 +91,12 @@
     "title": "Añadir un libro",
     "subtitle": "Solo el título es obligatorio. Todo lo demás es opcional."
   },
+  "bookSearch": {
+    "placeholder": "Buscar por título…",
+    "loading": "Buscando…",
+    "noResults": "Sin coincidencias.",
+    "unknownAuthor": "Autor desconocido"
+  },
   "editBook": {
     "title": "Editar libro"
   },

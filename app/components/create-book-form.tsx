@@ -1,20 +1,42 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createBookAction } from "@/app/actions/books";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/locales";
+import type { NormalizedVolume } from "@/lib/google-books";
+import { toStoredMetadata } from "@/lib/google-books";
 import { BookForm } from "./book-form";
+import { BookSearch } from "./book-search";
 
-export function CreateBookForm({ dictionary }: { dictionary: Dictionary }) {
+export function CreateBookForm({ dictionary, locale }: { dictionary: Dictionary; locale: Locale }) {
   const [state, action] = useActionState(createBookAction, { error: null as string | null });
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [metadataJson, setMetadataJson] = useState("");
+
+  function handleSelect(volume: NormalizedVolume) {
+    setTitle(volume.title);
+    setAuthor(volume.authors.join(", "));
+    setMetadataJson(JSON.stringify(toStoredMetadata(volume)));
+  }
+
   return (
-    <BookForm
-      action={action}
-      error={state?.error ? translateError(dictionary, state.error) : null}
-      submitLabel={dictionary.shelf.addBook}
-      cancelHref="/"
-      dictionary={dictionary}
-    />
+    <div className="space-y-6">
+      <BookSearch locale={locale} dictionary={dictionary} onSelect={handleSelect} />
+      <BookForm
+        action={action}
+        error={state?.error ? translateError(dictionary, state.error) : null}
+        submitLabel={dictionary.shelf.addBook}
+        cancelHref="/"
+        dictionary={dictionary}
+        titleValue={title}
+        onTitleChange={setTitle}
+        authorValue={author}
+        onAuthorChange={setAuthor}
+        metadataValue={metadataJson}
+      />
+    </div>
   );
 }
 

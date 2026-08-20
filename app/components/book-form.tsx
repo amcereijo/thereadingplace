@@ -12,6 +12,11 @@ type Props = {
   submitLabel: string;
   cancelHref?: string;
   dictionary: Dictionary;
+  titleValue?: string;
+  onTitleChange?: (value: string) => void;
+  authorValue?: string;
+  onAuthorChange?: (value: string) => void;
+  metadataValue?: string;
 };
 
 const defaultBook: BookRecord = {
@@ -31,16 +36,49 @@ const defaultBook: BookRecord = {
   updatedAt: "",
 };
 
-export function BookForm({ action, book, error, submitLabel, cancelHref, dictionary }: Props) {
+export function BookForm({
+  action,
+  book,
+  error,
+  submitLabel,
+  cancelHref,
+  dictionary,
+  titleValue,
+  onTitleChange,
+  authorValue,
+  onAuthorChange,
+  metadataValue,
+}: Props) {
   const initial = book ?? defaultBook;
-  const [title, setTitle] = useState(initial.title);
-  const [author, setAuthor] = useState(initial.author ?? "");
+  const [titleInternal, setTitleInternal] = useState(initial.title);
+  const [authorInternal, setAuthorInternal] = useState(initial.author ?? "");
   const [status, setStatus] = useState<BookStatus>(initial.status);
   const [formats, setFormats] = useState<BookFormat[]>(initial.formats);
   const [startedAt, setStartedAt] = useState(initial.startedAt ?? "");
   const [finishedAt, setFinishedAt] = useState(initial.finishedAt ?? "");
   const [abandonedAt, setAbandonedAt] = useState(initial.abandonedAt ?? "");
   const [note, setNote] = useState(initial.note ?? "");
+
+  const titleControlled = titleValue !== undefined && onTitleChange !== undefined;
+  const authorControlled = authorValue !== undefined && onAuthorChange !== undefined;
+  const title = titleControlled ? (titleValue as string) : titleInternal;
+  const author = authorControlled ? (authorValue as string) : authorInternal;
+
+  function setTitle(value: string) {
+    if (titleControlled) {
+      onTitleChange?.(value);
+    } else {
+      setTitleInternal(value);
+    }
+  }
+
+  function setAuthor(value: string) {
+    if (authorControlled) {
+      onAuthorChange?.(value);
+    } else {
+      setAuthorInternal(value);
+    }
+  }
 
   function reset() {
     setTitle(initial.title);
@@ -63,6 +101,7 @@ export function BookForm({ action, book, error, submitLabel, cancelHref, diction
     <form action={action} className="max-w-xl space-y-5">
       {book ? <input type="hidden" name="id" value={book.id} /> : null}
       <input type="hidden" name="formats" value={formats.join(",")} />
+      {metadataValue !== undefined ? <input type="hidden" name="metadata" value={metadataValue} /> : null}
       <ErrorMessage>{error ? translateError(dictionary, error) : null}</ErrorMessage>
 
       <div>

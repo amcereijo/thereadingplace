@@ -37,6 +37,7 @@ export async function createBookAction(
     abandonedAt: readOptionalDate(formData, "abandonedAt"),
     note: readNote(formData),
     author: readAuthor(formData),
+    metadata: readMetadata(formData),
   });
 
   revalidateShelves();

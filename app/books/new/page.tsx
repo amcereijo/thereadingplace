@@ -5,13 +5,13 @@ import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function NewBookPage() {
   await requireAppUser();
-  const { dictionary, t } = await getDictionaryForLocale();
+  const { dictionary, locale, t } = await getDictionaryForLocale();
   return (
     <div>
       <PageTitle>{t("newBook.title")}</PageTitle>
       <PageSubtitle>{t("newBook.subtitle")}</PageSubtitle>
       <div className="mt-6">
-        <CreateBookForm dictionary={dictionary} />
+        <CreateBookForm dictionary={dictionary} locale={locale} />
       </div>
     </div>
   );

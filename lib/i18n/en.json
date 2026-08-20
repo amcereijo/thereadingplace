@@ -91,6 +91,12 @@
     "title": "Add a book",
     "subtitle": "Only the title is required. Everything else is optional."
   },
+  "bookSearch": {
+    "placeholder": "Search by title…",
+    "loading": "Searching…",
+    "noResults": "No matches.",
+    "unknownAuthor": "Unknown author"
+  },
   "editBook": {
     "title": "Edit book"
   },
