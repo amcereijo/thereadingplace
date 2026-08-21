@@ -6,7 +6,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label } from "./ui";
 
 export function ClaimUsernameForm({ dictionary }: { dictionary: Dictionary }) {
-  const [state, action] = useActionState(claimUsernameAction, { error: null as string | null });
+  const [state, action, pending] = useActionState(claimUsernameAction, { error: null as string | null });
   const errorText = state?.error ? translateError(dictionary, state.error) : null;
 
   return (
@@ -20,10 +20,16 @@ export function ClaimUsernameForm({ dictionary }: { dictionary: Dictionary }) {
           autoComplete="username"
           placeholder={dictionary.claimUsername.usernamePlaceholder}
           required
+          disabled={pending}
         />
         <p className="mt-1.5 text-xs text-zinc-500">{dictionary.claimUsername.usernameHint}</p>
       </div>
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full"
+        loading={pending}
+        loadingText={dictionary.claimUsername.saving}
+      >
         {dictionary.claimUsername.saveUsername}
       </Button>
     </form>

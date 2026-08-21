@@ -72,8 +72,12 @@ export function AddToShelfButton({ bookId, dictionary, ariaLabel }: Props) {
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                   {dictionary.addToShelf.cancel}
                 </Button>
-                <Button type="submit" disabled={pending}>
-                  {pending ? dictionary.addToShelf.confirming : dictionary.addToShelf.confirm}
+                <Button
+                  type="submit"
+                  loading={pending}
+                  loadingText={dictionary.addToShelf.confirming}
+                >
+                  {dictionary.addToShelf.confirm}
                 </Button>
               </div>
             </form>

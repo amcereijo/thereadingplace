@@ -1,18 +1,22 @@
 "use client";
 
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setLocale } from "@/app/actions/locale";
 import { useLocale } from "./locale-provider";
-import { cn } from "./ui";
+import { cn, Spinner } from "./ui";
 
 export function LanguageToggle() {
   const router = useRouter();
   const locale = useLocale();
+  const [pending, startTransition] = useTransition();
 
-  async function switchLocale(next: "en" | "es") {
-    if (next === locale) return;
-    await setLocale(next);
-    router.refresh();
+  function switchLocale(next: "en" | "es") {
+    if (next === locale || pending) return;
+    startTransition(async () => {
+      await setLocale(next);
+      router.refresh();
+    });
   }
 
   return (
@@ -20,8 +24,9 @@ export function LanguageToggle() {
       <button
         type="button"
         onClick={() => switchLocale("en")}
+        disabled={pending}
         className={cn(
-          "rounded px-1.5 py-0.5 transition",
+          "rounded px-1.5 py-0.5 transition disabled:opacity-60",
           locale === "en" ? "bg-zinc-200 text-zinc-900" : "text-zinc-500 hover:text-zinc-900",
         )}
         aria-label="English"
@@ -32,14 +37,16 @@ export function LanguageToggle() {
       <button
         type="button"
         onClick={() => switchLocale("es")}
+        disabled={pending}
         className={cn(
-          "rounded px-1.5 py-0.5 transition",
+          "rounded px-1.5 py-0.5 transition disabled:opacity-60",
           locale === "es" ? "bg-zinc-200 text-zinc-900" : "text-zinc-500 hover:text-zinc-900",
         )}
         aria-label="Español"
       >
         ES
       </button>
+      {pending ? <Spinner size={12} className="text-zinc-400" /> : null}
     </div>
   );
 }

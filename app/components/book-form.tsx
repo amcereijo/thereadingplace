@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label, LinkButton, Select, TextArea } from "./ui";
+
+function SubmitButton({ label, savingLabel }: { label: string; savingLabel: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" loading={pending} loadingText={savingLabel}>
+      {label}
+    </Button>
+  );
+}
 
 type Props = {
   action: React.ComponentProps<"form">["action"];
@@ -163,7 +173,7 @@ export function BookForm({
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit">{submitLabel}</Button>
+        <SubmitButton label={submitLabel} savingLabel={dictionary.shelf.saving} />
         {cancelHref ? (
           <LinkButton href={cancelHref} variant="secondary">
             {dictionary.bookForm.cancel}

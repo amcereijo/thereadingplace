@@ -78,8 +78,8 @@ export function ChangeStatusButton({ bookId, currentStatus, dictionary, ariaLabe
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                   {dictionary.bookForm.cancel}
                 </Button>
-                <Button type="submit" disabled={pending}>
-                  {pending ? dictionary.shelf.saving : dictionary.shelf.save}
+                <Button type="submit" loading={pending} loadingText={dictionary.shelf.saving}>
+                  {dictionary.shelf.save}
                 </Button>
               </div>
             </form>

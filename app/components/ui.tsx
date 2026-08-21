@@ -49,18 +49,38 @@ export function Button({
   variant = "primary",
   className,
   asChild,
+  loading = false,
+  loadingText,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   asChild?: never;
+  loading?: boolean;
+  loadingText?: ReactNode;
 }) {
   if (asChild) {
     return null;
   }
 
   return (
-    <button type={type} className={buttonClasses(variant, className)} {...props}>
-      {children}
+    <button
+      type={type}
+      className={buttonClasses(variant, className)}
+      aria-busy={loading || undefined}
+      disabled={loading || props.disabled}
+      {...props}
+    >
+      {loading ? (
+        <span className="inline-flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="app-spinner inline-block h-4 w-4 border-2"
+          />
+          {loadingText ?? children}
+        </span>
+      ) : (
+        children
+      )}
     </button>
   );
 }
@@ -70,16 +90,31 @@ export function IconButton({
   variant = "secondary",
   className,
   icon,
+  loading = false,
   ...props
 }: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "aria-label" | "children"> & {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   icon: ReactNode;
   "aria-label": string;
+  loading?: boolean;
 }) {
   return (
-    <button type={type} className={iconButtonClasses(variant, className)} {...props}>
+    <button
+      type={type}
+      className={iconButtonClasses(variant, className)}
+      aria-busy={loading || undefined}
+      disabled={loading || props.disabled}
+      {...props}
+    >
       <span aria-hidden="true" className="inline-flex h-5 w-5 items-center justify-center">
-        {icon}
+        {loading ? (
+          <span
+            aria-hidden="true"
+            className="app-spinner inline-block h-4 w-4 border-2"
+          />
+        ) : (
+          icon
+        )}
       </span>
     </button>
   );
@@ -222,6 +257,53 @@ export function StyledLink({ href, children }: { href: string; children: ReactNo
     <Link href={href} className="text-teal-700 underline-offset-2 hover:text-teal-800 hover:underline">
       {children}
     </Link>
+  );
+}
+
+export function Spinner({
+  size = 16,
+  className,
+  label,
+}: {
+  size?: number;
+  className?: string;
+  label?: string;
+}) {
+  const dim = `${size}px`;
+  return (
+    <span
+      role="status"
+      aria-live="polite"
+      className={cn("inline-flex items-center gap-2 align-middle", className)}
+    >
+      <span
+        aria-hidden="true"
+        className="app-spinner shrink-0"
+        style={{
+          width: dim,
+          height: dim,
+          borderWidth: Math.max(2, Math.round(size / 8)),
+        }}
+      />
+      {label ? <span className="text-sm">{label}</span> : null}
+    </span>
+  );
+}
+
+export function PageLoading({ label }: { label?: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-zinc-500"
+    >
+      <span
+        aria-hidden="true"
+        className="app-spinner"
+        style={{ width: "32px", height: "32px", borderWidth: "3px", color: "#0f766e" }}
+      />
+      {label ? <span className="text-sm">{label}</span> : null}
+    </div>
   );
 }
 

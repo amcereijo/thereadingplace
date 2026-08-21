@@ -1,21 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { mintInviteLinkAction } from "@/app/actions/friends";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, Card } from "./ui";
 
 export function MintInviteLink({ dictionary }: { dictionary: Dictionary }) {
   const [url, setUrl] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   return (
     <div className="space-y-3">
       <Button
         type="button"
         variant="secondary"
-        onClick={async () => {
-          const result = await mintInviteLinkAction();
-          setUrl(result.url);
+        loading={pending}
+        onClick={() => {
+          startTransition(async () => {
+            const result = await mintInviteLinkAction();
+            setUrl(result.url);
+          });
         }}
       >
         {dictionary.friends.createNewMemberLink}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { deleteBookAction } from "@/app/actions/books";
 import { type AppUser, type BookRecord } from "@/lib/types";
@@ -9,6 +10,28 @@ import { AddToShelfButton } from "./add-to-shelf-button";
 import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
 import { Card, EmptyState, IconButton, IconLinkButton, StatusBadge } from "./ui";
+
+function DeleteBookSubmit({
+  ariaLabel,
+  title,
+  icon,
+}: {
+  ariaLabel: string;
+  title: string;
+  icon: React.ReactNode;
+}) {
+  const { pending } = useFormStatus();
+  return (
+    <IconButton
+      type="submit"
+      variant="danger"
+      aria-label={ariaLabel}
+      title={title}
+      icon={icon}
+      loading={pending}
+    />
+  );
+}
 
 type SortKey = "dateAdded" | "title" | "finishedAt";
 type SortDir = "asc" | "desc";
@@ -162,10 +185,8 @@ export function BookList({
                       ) : null}
                       <form action={deleteBookAction}>
                         <input type="hidden" name="id" value={book.id} />
-                        <IconButton
-                          type="submit"
-                          variant="danger"
-                          aria-label={dictionary.shelf.deleteAria}
+                        <DeleteBookSubmit
+                          ariaLabel={dictionary.shelf.deleteAria}
                           title={dictionary.shelf.delete}
                           icon={<Trash2 className="h-5 w-5" />}
                         />

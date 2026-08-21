@@ -55,6 +55,7 @@
     "metadata": "Metadata",
     "edit": "Edit",
     "delete": "Delete",
+    "deleting": "Deleting…",
     "details": "Details",
     "showLess": "Show less",
     "changeStatus": "Change status",
@@ -134,6 +135,7 @@
     "username": "Username",
     "usernamePlaceholder": "@friend",
     "invite": "Invite",
+    "inviting": "Inviting…",
     "inviteSent": "Invite sent.",
     "newMemberLink": "New-member link",
     "newMemberLinkDescription": "One-shot link. Send it to someone who does not have an account yet.",
@@ -144,7 +146,9 @@
     "outgoingRequests": "Outgoing requests",
     "pending": "Pending",
     "accept": "Accept",
-    "decline": "Decline"
+    "accepting": "Accepting…",
+    "decline": "Decline",
+    "declining": "Declining…"
   },
   "addToShelf": {
     "title": "Add to my shelf",
@@ -176,7 +180,8 @@
     "username": "Username",
     "usernamePlaceholder": "your_handle",
     "usernameHint": "3–32 lowercase letters, numbers, or underscores.",
-    "saveUsername": "Save username"
+    "saveUsername": "Save username",
+    "saving": "Saving…"
   },
   "invite": {
     "invalid": "This invite link is no longer valid.",
@@ -199,6 +204,7 @@
     "recommendationNotFound": "Recommendation not found."
   },
   "back": "Go back",
+  "loading": "Loading…",
   "recommendations": {
     "title": "Recommendations",
     "subtitle": "Books your friends think you would like.",

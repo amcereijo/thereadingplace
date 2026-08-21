@@ -6,7 +6,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, SuccessMessage } from "./ui";
 
 export function InviteUsernameForm({ dictionary }: { dictionary: Dictionary }) {
-  const [state, action] = useActionState(inviteByUsernameAction, {
+  const [state, action, pending] = useActionState(inviteByUsernameAction, {
     error: null as string | null,
     ok: null as string | null,
   });
@@ -21,9 +21,17 @@ export function InviteUsernameForm({ dictionary }: { dictionary: Dictionary }) {
           <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-zinc-700">
             {dictionary.friends.username}
           </label>
-          <Input id="username" name="username" placeholder={dictionary.friends.usernamePlaceholder} required />
+          <Input
+            id="username"
+            name="username"
+            placeholder={dictionary.friends.usernamePlaceholder}
+            required
+            disabled={pending}
+          />
         </div>
-        <Button type="submit">{dictionary.friends.invite}</Button>
+        <Button type="submit" loading={pending} loadingText={dictionary.friends.inviting}>
+          {dictionary.friends.invite}
+        </Button>
       </div>
       <ErrorMessage>{errorText}</ErrorMessage>
       <SuccessMessage>{okText}</SuccessMessage>

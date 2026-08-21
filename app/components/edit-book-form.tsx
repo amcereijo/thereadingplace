@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { updateBookAction } from "@/app/actions/books";
@@ -9,6 +10,15 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, IconButton, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 import { RecommendPanel } from "./recommend-panel";
 import { deleteBookAction } from "@/app/actions/books";
+
+function DeleteSubmit({ dictionary }: { dictionary: Dictionary }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" variant="danger" loading={pending} loadingText={dictionary.shelf.deleting}>
+      {dictionary.shelf.delete}
+    </Button>
+  );
+}
 
 type MetaEntry = { key: string; value: string };
 
@@ -63,7 +73,7 @@ export function EditBookForm({
   recommendFriends?: AppUser[];
 }) {
   const router = useRouter();
-  const [state, action] = useActionState(updateBookAction, { error: null as string | null, success: false as boolean });
+  const [state, action, pending] = useActionState(updateBookAction, { error: null as string | null, success: false as boolean });
 
   useEffect(() => {
     if (state?.success) {
@@ -273,8 +283,10 @@ export function EditBookForm({
       </fieldset>
 
       <div className="flex items-center gap-3">
-        <Button type="submit">{dictionary.bookForm.saveChanges}</Button>
-        <Button type="button" variant="secondary" onClick={reset}>
+        <Button type="submit" loading={pending} loadingText={dictionary.shelf.saving}>
+          {dictionary.bookForm.saveChanges}
+        </Button>
+        <Button type="button" variant="secondary" onClick={reset} disabled={pending}>
           {dictionary.bookForm.discardChanges}
         </Button>
         {recommendFriends ? (
@@ -289,9 +301,7 @@ export function EditBookForm({
 
       <form action={deleteBookAction} className="border-t border-zinc-200 pt-5">
         <input type="hidden" name="id" value={book.id} />
-        <Button type="submit" variant="danger">
-          {dictionary.shelf.delete}
-        </Button>
+        <DeleteSubmit dictionary={dictionary} />
       </form>
     </form>
   );

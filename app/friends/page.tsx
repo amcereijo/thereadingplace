@@ -1,8 +1,9 @@
 import { acceptInviteAction, declineInviteAction } from "@/app/actions/friends";
+import { FriendRequestSubmit } from "@/app/components/friend-request-submit";
 import { FriendsList } from "@/app/components/friends-list";
 import { InviteUsernameForm } from "@/app/components/invite-username-form";
 import { MintInviteLink } from "@/app/components/mint-invite-link";
-import { Button, Card, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
+import { Card, PageSubtitle, PageTitle, SectionTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import {
   listAcceptedFriends,
@@ -55,13 +56,23 @@ export default async function FriendsPage() {
                   <div className="flex gap-2">
                     <form action={acceptInviteAction}>
                       <input type="hidden" name="id" value={row.id} />
-                      <Button type="submit">{t("friends.accept")}</Button>
+                      <FriendRequestSubmit
+                        intent="accept"
+                        acceptLabel={t("friends.accept")}
+                        declineLabel={t("friends.decline")}
+                        acceptingLabel={t("friends.accepting")}
+                        decliningLabel={t("friends.declining")}
+                      />
                     </form>
                     <form action={declineInviteAction}>
                       <input type="hidden" name="id" value={row.id} />
-                      <Button type="submit" variant="secondary">
-                        {t("friends.decline")}
-                      </Button>
+                      <FriendRequestSubmit
+                        intent="decline"
+                        acceptLabel={t("friends.accept")}
+                        declineLabel={t("friends.decline")}
+                        acceptingLabel={t("friends.accepting")}
+                        decliningLabel={t("friends.declining")}
+                      />
                     </form>
                   </div>
                 </Card>

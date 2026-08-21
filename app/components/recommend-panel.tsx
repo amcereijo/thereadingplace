@@ -159,8 +159,13 @@ export function RecommendPanel({ bookId, friends, dictionary, ariaLabel }: Props
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                   {t("cancel")}
                 </Button>
-                <Button type="submit" disabled={pending || !receiverId}>
-                  {pending ? t("sending") : t("send")}
+                <Button
+                  type="submit"
+                  loading={pending}
+                  loadingText={t("sending")}
+                  disabled={!receiverId}
+                >
+                  {t("send")}
                 </Button>
               </div>
             </form>

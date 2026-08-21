@@ -55,6 +55,7 @@
     "metadata": "Metadatos",
     "edit": "Editar",
     "delete": "Borrar",
+    "deleting": "Borrando…",
     "details": "Detalles",
     "showLess": "Mostrar menos",
     "changeStatus": "Cambiar estado",
@@ -134,6 +135,7 @@
     "username": "Nombre de usuario",
     "usernamePlaceholder": "@amigo",
     "invite": "Invitar",
+    "inviting": "Invitando…",
     "inviteSent": "Invitación enviada.",
     "newMemberLink": "Enlace para nuevos miembros",
     "newMemberLinkDescription": "Enlace de un solo uso. Envíalo a alguien que aún no tenga una cuenta.",
@@ -144,7 +146,9 @@
     "outgoingRequests": "Solicitudes salientes",
     "pending": "Pendiente",
     "accept": "Aceptar",
-    "decline": "Rechazar"
+    "accepting": "Aceptando…",
+    "decline": "Rechazar",
+    "declining": "Rechazando…"
   },
   "addToShelf": {
     "title": "Añadir a mi estantería",
@@ -176,7 +180,8 @@
     "username": "Nombre de usuario",
     "usernamePlaceholder": "tu_usuario",
     "usernameHint": "De 3 a 32 letras minúsculas, números o guiones bajos.",
-    "saveUsername": "Guardar nombre de usuario"
+    "saveUsername": "Guardar nombre de usuario",
+    "saving": "Guardando…"
   },
   "invite": {
     "invalid": "Este enlace de invitación ya no es válido.",
@@ -199,6 +204,7 @@
     "recommendationNotFound": "Recomendación no encontrada."
   },
   "back": "Volver",
+  "loading": "Cargando…",
   "recommendations": {
     "title": "Recomendaciones",
     "subtitle": "Libros que tus amigos creen que te gustarían.",

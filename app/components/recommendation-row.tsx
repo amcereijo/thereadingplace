@@ -204,8 +204,8 @@ export function RecommendationRow({
                 <Button type="button" variant="ghost" onClick={() => { setOpen(false); setReplyText(""); }}>
                   {t("cancel")}
                 </Button>
-                <Button type="submit" disabled={acceptPending}>
-                  {acceptPending ? t("accepting") : t("accept")}
+                <Button type="submit" loading={acceptPending} loadingText={t("accepting")}>
+                  {t("accept")}
                 </Button>
               </div>
             </form>
@@ -254,8 +254,13 @@ export function RecommendationRow({
                 <Button type="button" variant="ghost" onClick={() => { setOpen(false); setReplyText(""); }}>
                   {t("cancel")}
                 </Button>
-                <Button type="submit" variant="danger" disabled={dismissPending}>
-                  {dismissPending ? t("dismissing") : t("dismiss")}
+                <Button
+                  type="submit"
+                  variant="danger"
+                  loading={dismissPending}
+                  loadingText={t("dismissing")}
+                >
+                  {t("dismiss")}
                 </Button>
               </div>
             </form>
