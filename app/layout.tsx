@@ -32,6 +32,18 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: dictionary.meta.title,
     description: dictionary.meta.description,
+    icons: {
+      icon: "/favicon.svg",
+      shortcut: "/favicon.ico",
+      apple: "/favicon.svg",
+    },
+    manifest: "/manifest.json",
+    themeColor: "#0f766e",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: dictionary.meta.title,
+    },
   };
 }
 
