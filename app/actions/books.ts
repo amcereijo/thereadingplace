@@ -90,6 +90,43 @@ export async function deleteBookAction(formData: FormData) {
   revalidateShelves();
 }
 
+export async function changeBookStatusAction(
+  _prev: { error: string | null; success: boolean },
+  formData: FormData,
+) {
+  const user = await requireAppUser();
+  const id = String(formData.get("id") ?? "");
+  const status = readStatus(formData);
+  if (!status) return { error: "errors.statusRequired", success: false };
+
+  const book = await getBook(id);
+  if (!book || book.ownerId !== user.id) {
+    return { error: "errors.bookNotFound", success: false };
+  }
+
+  if (book.status === status) {
+    return { error: null, success: true };
+  }
+
+  await updateBook(id, {
+    title: book.title,
+    status,
+    formats: book.formats,
+    startedAt: book.startedAt ?? null,
+    finishedAt: book.finishedAt ?? null,
+    abandonedAt: book.abandonedAt ?? null,
+    dateAdded: book.dateAdded ?? null,
+    note: book.note ?? null,
+    author: book.author ?? null,
+    metadata: book.metadata,
+    oldStatus: book.status,
+    currentStartedAt: book.startedAt,
+  });
+
+  revalidateShelves();
+  return { error: null, success: true };
+}
+
 export async function copyBookFromFriendAction(
   _prev: { error: string | null },
   formData: FormData,

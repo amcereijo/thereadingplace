@@ -57,6 +57,10 @@
     "delete": "Borrar",
     "details": "Detalles",
     "showLess": "Mostrar menos",
+    "changeStatus": "Cambiar estado",
+    "selectStatus": "Seleccionar estado…",
+    "save": "Guardar",
+    "saving": "Guardando…",
     "all": "Todos",
     "more": "... y {count} más"
   },

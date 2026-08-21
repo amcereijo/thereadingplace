@@ -7,6 +7,7 @@ import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type AppUser, type BookFor
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Button, ErrorMessage, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 import { RecommendPanel } from "./recommend-panel";
+import { deleteBookAction } from "@/app/actions/books";
 
 type MetaEntry = { key: string; value: string };
 
@@ -146,17 +147,17 @@ export function EditBookForm({
       <ErrorMessage>{state?.error ? translateError(dictionary, state.error) : null}</ErrorMessage>
 
       <div>
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{dictionary.bookForm.title}</Label>
         <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div>
-        <Label htmlFor="author">Author</Label>
+        <Label htmlFor="author">{dictionary.bookForm.author}</Label>
         <Input id="author" name="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
       </div>
 
       <div>
-        <Label htmlFor="status">Status</Label>
+        <Label htmlFor="status">{dictionary.bookForm.status}</Label>
         <Select id="status" name="status" value={status} onChange={(e) => handleStatusChange(e.target.value as BookStatus)}>
           {BOOK_STATUSES.map((s) => (
             <option key={s} value={s}>
@@ -280,6 +281,13 @@ export function EditBookForm({
         ) : null}
         {state?.success && <SuccessMessage>{dictionary.bookForm.changesSaved}</SuccessMessage>}
       </div>
+
+      <form action={deleteBookAction} className="border-t border-zinc-200 pt-5">
+        <input type="hidden" name="id" value={book.id} />
+        <Button type="submit" variant="danger">
+          {dictionary.shelf.delete}
+        </Button>
+      </form>
     </form>
   );
 }

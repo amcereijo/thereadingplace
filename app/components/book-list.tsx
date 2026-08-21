@@ -5,6 +5,7 @@ import { deleteBookAction } from "@/app/actions/books";
 import { type AppUser, type BookRecord } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { AddToShelfButton } from "./add-to-shelf-button";
+import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
 import { Button, Card, EmptyState, LinkButton, StatusBadge } from "./ui";
 
@@ -136,7 +137,12 @@ export function BookList({
                     ) : null}
                   </div>
                   {editable ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-stretch gap-2">
+                      <ChangeStatusButton
+                        bookId={book.id}
+                        currentStatus={book.status}
+                        dictionary={dictionary}
+                      />
                       <LinkButton variant="secondary" href={`/books/${book.id}/edit`}>
                         {dictionary.shelf.edit}
                       </LinkButton>

@@ -45,16 +45,16 @@ export default async function RootLayout({
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
             <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur">
-              <div className="relative mx-auto flex h-14 max-w-4xl items-center px-4 sm:px-6">
+              <div className="relative mx-auto flex max-w-4xl flex-col items-center px-4 pt-2 sm:h-14 sm:flex-row sm:items-center sm:px-6 sm:pt-0">
                 <Link
                   href="/"
-                  className="min-w-0 truncate text-lg font-bold tracking-tight text-teal-800 hover:text-teal-900 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+                  className="min-w-0 truncate text-lg font-bold tracking-tight text-teal-800 hover:text-teal-900"
                 >
                   {dictionary.meta.title}
                 </Link>
-                <nav className="ml-auto flex shrink-0 items-center gap-3 text-sm font-medium text-zinc-700 sm:absolute sm:right-6 sm:ml-0 sm:gap-4">
+                <nav className="mt-1 flex items-center gap-3 text-sm font-medium text-zinc-700 sm:absolute sm:right-6 sm:mt-0 sm:gap-4">
                   <Show when="signed-in">
-                    <Link href="/" className="hidden hover:text-zinc-900 sm:inline">
+                    <Link href="/" className="hover:text-zinc-900">
                       {dictionary.nav.shelf}
                     </Link>
                     <Link href="/friends" className="hover:text-zinc-900">

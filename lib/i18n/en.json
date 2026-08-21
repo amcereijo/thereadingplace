@@ -57,6 +57,10 @@
     "delete": "Delete",
     "details": "Details",
     "showLess": "Show less",
+    "changeStatus": "Change status",
+    "selectStatus": "Select status…",
+    "save": "Save",
+    "saving": "Saving…",
     "all": "All",
     "more": "... and {count} more"
   },
