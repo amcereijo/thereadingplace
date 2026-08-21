@@ -19,7 +19,7 @@ export default async function FriendStatusPage({
   if (!isBookStatus(status)) notFound();
 
   const owner = await getUserByUsername(username);
-  const { dictionary } = await getDictionaryForLocale();
+  const { dictionary, locale } = await getDictionaryForLocale();
   if (!owner) notFound();
 
   const allowed = await canReadShelf(viewer.id, owner.id);
@@ -45,7 +45,7 @@ export default async function FriendStatusPage({
       <div className="mt-6">
         <ShelfNav basePath={`/u/${owner.username}`} current={status} counts={counts} dictionary={dictionary} />
       </div>
-      <BookList books={books} friendView dictionary={dictionary} />
+      <BookList books={books} friendView dictionary={dictionary} locale={locale} />
     </div>
   );
 }

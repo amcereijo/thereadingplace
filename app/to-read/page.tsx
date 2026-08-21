@@ -8,7 +8,7 @@ import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function ToReadPage() {
   const user = await requireAppUser();
-  const { dictionary, t } = await getDictionaryForLocale();
+  const { dictionary, locale, t } = await getDictionaryForLocale();
   const [books, counts, friends] = await Promise.all([
     listBooks(user.id, "to-read"),
     countBooksByStatus(user.id),
@@ -26,7 +26,7 @@ export default async function ToReadPage() {
         counts={counts}
         dictionary={dictionary}
       />
-      <BookList books={books} editable dictionary={dictionary} recommendFriends={friends} />
+      <BookList books={books} editable dictionary={dictionary} locale={locale} recommendFriends={friends} />
     </div>
   );
 }

@@ -19,7 +19,7 @@ export default async function FriendShelfPage({
   const viewer = await requireAppUser();
   const { username } = await params;
   const owner = await getUserByUsername(username);
-  const { dictionary, t } = await getDictionaryForLocale();
+  const { dictionary, locale, t } = await getDictionaryForLocale();
   if (!owner) notFound();
 
   const allowed = await canReadShelf(viewer.id, owner.id);
@@ -45,7 +45,7 @@ export default async function FriendShelfPage({
       <div className="mt-6">
         <ShelfNav basePath={`/u/${owner.username}`} current={status ?? "all"} counts={counts} dictionary={dictionary} />
       </div>
-      <BookList books={books} friendView dictionary={dictionary} />
+      <BookList books={books} friendView dictionary={dictionary} locale={locale} />
     </div>
   );
 }

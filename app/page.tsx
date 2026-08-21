@@ -15,7 +15,7 @@ export default async function HomePage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { userId } = await auth();
-  const { dictionary, t } = await getDictionaryForLocale();
+  const { dictionary, locale, t } = await getDictionaryForLocale();
 
   if (!userId) {
     return <LandingPage dictionary={dictionary} />;
@@ -52,7 +52,7 @@ export default async function HomePage({
         dictionary={dictionary}
       />
 
-      <BookList books={books} editable dictionary={dictionary} recommendFriends={friends} />
+      <BookList books={books} editable dictionary={dictionary} locale={locale} recommendFriends={friends} />
     </div>
   );
 }

@@ -5,7 +5,9 @@ import { useFormStatus } from "react-dom";
 import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { deleteBookAction } from "@/app/actions/books";
 import { type AppUser, type BookRecord } from "@/lib/types";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { type Dictionary, createT } from "@/lib/i18n/dictionaries";
+import { formatBookDate } from "@/lib/i18n/format-date";
+import type { Locale } from "@/lib/i18n/locales";
 import { AddToShelfButton } from "./add-to-shelf-button";
 import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
@@ -41,6 +43,7 @@ type Props = {
   editable?: boolean;
   friendView?: boolean;
   dictionary: Dictionary;
+  locale: Locale;
   recommendFriends?: AppUser[];
 };
 
@@ -85,11 +88,16 @@ export function BookList({
   editable = false,
   friendView = false,
   dictionary,
+  locale,
   recommendFriends,
 }: Props) {
   const [sort, setSort] = useState<`${SortKey}-${SortDir}`>("dateAdded-desc");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const sortOptions = useSortOptions(dictionary);
+  const t = useMemo(() => createT(dictionary), [dictionary]);
+
+  const formatDate = (value: string | null | undefined): string | null =>
+    formatBookDate(value, locale);
 
   const sorted = useMemo(() => {
     const [key, dir] = sort.split("-") as [SortKey, SortDir];
@@ -140,10 +148,10 @@ export function BookList({
                     ) : null}
                     <p className="mt-1 text-xs text-zinc-400">
                       {[
-                        book.dateAdded && `${dictionary.shelf.added} ${book.dateAdded}`,
-                        book.startedAt && `${dictionary.shelf.started} ${book.startedAt}`,
-                        book.finishedAt && `${dictionary.shelf.finished} ${book.finishedAt}`,
-                        book.abandonedAt && `${dictionary.shelf.abandoned} ${book.abandonedAt}`,
+                        formatDate(book.dateAdded) && t("shelf.addedOn", { date: formatDate(book.dateAdded)! }),
+                        formatDate(book.startedAt) && t("shelf.startedOn", { date: formatDate(book.startedAt)! }),
+                        formatDate(book.finishedAt) && t("shelf.finishedOn", { date: formatDate(book.finishedAt)! }),
+                        formatDate(book.abandonedAt) && t("shelf.abandonedOn", { date: formatDate(book.abandonedAt)! }),
                       ]
                         .filter(Boolean)
                         .join(" · ")}
@@ -234,7 +242,7 @@ export function BookList({
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
                             {dictionary.shelf.dateAdded}
                           </dt>
-                          <dd className="text-zinc-900">{book.dateAdded}</dd>
+                          <dd className="text-zinc-900">{formatDate(book.dateAdded)}</dd>
                         </div>
                       ) : null}
 
@@ -243,7 +251,7 @@ export function BookList({
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
                             {dictionary.shelf.startedAt}
                           </dt>
-                          <dd className="text-zinc-900">{book.startedAt}</dd>
+                          <dd className="text-zinc-900">{formatDate(book.startedAt)}</dd>
                         </div>
                       ) : null}
 
@@ -252,7 +260,7 @@ export function BookList({
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
                             {dictionary.shelf.finishedAt}
                           </dt>
-                          <dd className="text-zinc-900">{book.finishedAt}</dd>
+                          <dd className="text-zinc-900">{formatDate(book.finishedAt)}</dd>
                         </div>
                       ) : null}
 
@@ -261,7 +269,7 @@ export function BookList({
                           <dt className="rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
                             {dictionary.shelf.abandonedAt}
                           </dt>
-                          <dd className="text-zinc-900">{book.abandonedAt}</dd>
+                          <dd className="text-zinc-900">{formatDate(book.abandonedAt)}</dd>
                         </div>
                       ) : null}
 
