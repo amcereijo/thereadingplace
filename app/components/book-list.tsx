@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { deleteBookAction } from "@/app/actions/books";
 import { type AppUser, type BookRecord } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { AddToShelfButton } from "./add-to-shelf-button";
 import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
-import { Button, Card, EmptyState, LinkButton, StatusBadge } from "./ui";
+import { Card, EmptyState, IconButton, IconLinkButton, StatusBadge } from "./ui";
 
 type SortKey = "dateAdded" | "title" | "finishedAt";
 type SortDir = "asc" | "desc";
@@ -137,38 +138,53 @@ export function BookList({
                     ) : null}
                   </div>
                   {editable ? (
-                    <div className="flex flex-col items-stretch gap-2">
+                    <div className="flex flex-row items-center gap-1">
                       <ChangeStatusButton
                         bookId={book.id}
                         currentStatus={book.status}
                         dictionary={dictionary}
+                        ariaLabel={dictionary.shelf.changeStatusAria}
                       />
-                      <LinkButton variant="secondary" href={`/books/${book.id}/edit`}>
-                        {dictionary.shelf.edit}
-                      </LinkButton>
+                      <IconLinkButton
+                        variant="secondary"
+                        href={`/books/${book.id}/edit`}
+                        aria-label={dictionary.shelf.editAria}
+                        title={dictionary.shelf.edit}
+                        icon={<Pencil className="h-5 w-5" />}
+                      />
                       {recommendFriends ? (
                         <RecommendPanel
                           bookId={book.id}
                           friends={recommendFriends}
                           dictionary={dictionary}
+                          ariaLabel={dictionary.shelf.recommendAria}
                         />
                       ) : null}
                       <form action={deleteBookAction}>
                         <input type="hidden" name="id" value={book.id} />
-                        <Button type="submit" variant="danger">
-                          {dictionary.shelf.delete}
-                        </Button>
+                        <IconButton
+                          type="submit"
+                          variant="danger"
+                          aria-label={dictionary.shelf.deleteAria}
+                          title={dictionary.shelf.delete}
+                          icon={<Trash2 className="h-5 w-5" />}
+                        />
                       </form>
                     </div>
                   ) : friendView ? (
-                    <div className="flex items-center gap-2">
-                      <Button
+                    <div className="flex items-center gap-1">
+                      <IconButton
                         variant="secondary"
                         onClick={() => setExpandedId(expanded ? null : book.id)}
-                      >
-                        {expanded ? dictionary.shelf.showLess : dictionary.shelf.details}
-                      </Button>
-                      <AddToShelfButton bookId={book.id} dictionary={dictionary} />
+                        aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.detailsAria}
+                        title={expanded ? dictionary.shelf.showLess : dictionary.shelf.details}
+                        icon={expanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                      />
+                      <AddToShelfButton
+                        bookId={book.id}
+                        dictionary={dictionary}
+                        ariaLabel={dictionary.shelf.addToShelfAria}
+                      />
                     </div>
                   ) : null}
                 </div>

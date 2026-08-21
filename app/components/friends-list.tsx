@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Eye } from "lucide-react";
 import { type AppUser } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Card, EmptyState, Input, LinkButton, SectionTitle } from "./ui";
+import { Card, EmptyState, IconLinkButton, Input, SectionTitle } from "./ui";
 
 type Props = {
   friends: AppUser[];
@@ -13,7 +14,7 @@ type Props = {
 export function FriendsList({ friends, dictionary }: Props) {
   const [query, setQuery] = useState("");
   const t = (key: string, params?: Record<string, string | number>) => {
-    const value = dictionary[key as keyof Dictionary] as string | undefined;
+    const value = resolveKey(dictionary, key);
     return value ? interpolate(value, params ?? {}) : key;
   };
 
@@ -59,13 +60,14 @@ export function FriendsList({ friends, dictionary }: Props) {
                     @{friend.username}
                   </span>
                 </div>
-                <LinkButton
+                <IconLinkButton
                   variant="secondary"
                   href={`/u/${friend.username}`}
-                  className="w-full"
-                >
-                  {dictionary.friends.viewShelf}
-                </LinkButton>
+                  aria-label={t("friends.viewShelfAria", { username: friend.username ?? "" })}
+                  title={dictionary.friends.viewShelf}
+                  icon={<Eye className="h-5 w-5" />}
+                  className="self-end"
+                />
               </Card>
             </li>
           ))}
@@ -77,4 +79,17 @@ export function FriendsList({ friends, dictionary }: Props) {
 
 function interpolate(value: string, params: Record<string, string | number>): string {
   return value.replace(/\{(\w+)\}/g, (_, name) => String(params[name] ?? `{${name}}`));
+}
+
+function resolveKey(dict: Dictionary, key: string): string | undefined {
+  const parts = key.split(".");
+  let current: unknown = dict;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return undefined;
+    }
+  }
+  return typeof current === "string" ? current : undefined;
 }

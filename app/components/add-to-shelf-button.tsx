@@ -1,17 +1,19 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { BookmarkPlus } from "lucide-react";
 import { copyBookFromFriendAction } from "@/app/actions/books";
 import { BOOK_STATUSES, getStatusLabel } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Button, ErrorMessage } from "./ui";
+import { Button, ErrorMessage, IconButton } from "./ui";
 
 type Props = {
   bookId: string;
   dictionary: Dictionary;
+  ariaLabel?: string;
 };
 
-export function AddToShelfButton({ bookId, dictionary }: Props) {
+export function AddToShelfButton({ bookId, dictionary, ariaLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(async (_prev: { error: string | null }, formData: FormData) => {
     const result = await copyBookFromFriendAction({ error: null }, formData);
@@ -21,9 +23,19 @@ export function AddToShelfButton({ bookId, dictionary }: Props) {
 
   return (
     <div className="relative inline-block">
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        {dictionary.addToShelf.title}
-      </Button>
+      {ariaLabel ? (
+        <IconButton
+          variant="secondary"
+          onClick={() => setOpen(true)}
+          aria-label={ariaLabel}
+          title={dictionary.addToShelf.title}
+          icon={<BookmarkPlus className="h-5 w-5" />}
+        />
+      ) : (
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          {dictionary.addToShelf.title}
+        </Button>
+      )}
 
       {open ? (
         <div

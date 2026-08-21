@@ -1,18 +1,20 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { Send } from "lucide-react";
 import { sendRecommendationAction } from "@/app/actions/recommendations";
 import { type AppUser } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Button, ErrorMessage, Input, TextArea } from "./ui";
+import { Button, ErrorMessage, IconButton, Input, TextArea } from "./ui";
 
 type Props = {
   bookId: string;
   friends: AppUser[];
   dictionary: Dictionary;
+  ariaLabel?: string;
 };
 
-export function RecommendPanel({ bookId, friends, dictionary }: Props) {
+export function RecommendPanel({ bookId, friends, dictionary, ariaLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const [receiverId, setReceiverId] = useState<string>("");
@@ -50,9 +52,19 @@ export function RecommendPanel({ bookId, friends, dictionary }: Props) {
 
   return (
     <div className="relative inline-block">
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        {t("recommend")}
-      </Button>
+      {ariaLabel ? (
+        <IconButton
+          variant="secondary"
+          onClick={() => setOpen(true)}
+          aria-label={ariaLabel}
+          title={t("recommend")}
+          icon={<Send className="h-5 w-5" />}
+        />
+      ) : (
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          {t("recommend")}
+        </Button>
+      )}
 
       {open ? (
         <div

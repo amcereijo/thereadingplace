@@ -1,8 +1,4 @@
-## Purpose
-
-Lets a viewer copy a book from a friend's shelf to their own shelf with a chosen status.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Copy book from friend's shelf
 The system SHALL allow a signed-in viewer who can see a friend's shelf to copy any book on that shelf to their own shelf. The viewer MUST choose a status for the copied book. The system SHALL copy the title, formats, and note from the original book. The system MUST NOT copy dates, metadata, or the original book's id. The trigger that initiates the copy-to-shelf flow on a friend's book card SHALL be an icon-only button with a localized `aria-label`; the resulting dialog title, body, status selector, and submit/cancel buttons SHALL remain as visible text.

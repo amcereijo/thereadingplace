@@ -2,10 +2,11 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import { updateBookAction } from "@/app/actions/books";
 import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type AppUser, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Button, ErrorMessage, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
+import { Button, ErrorMessage, IconButton, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 import { RecommendPanel } from "./recommend-panel";
 import { deleteBookAction } from "@/app/actions/books";
 
@@ -256,9 +257,13 @@ export function EditBookForm({
                 onChange={(e) => updateMetaEntry(i, "value", e.target.value)}
                 className="flex-1"
               />
-              <Button type="button" variant="ghost" onClick={() => removeMetaEntry(i)}>
-                ✕
-              </Button>
+              <IconButton
+                type="button"
+                variant="ghost"
+                onClick={() => removeMetaEntry(i)}
+                aria-label={dictionary.bookForm.removeFieldAria}
+                icon={<X className="h-5 w-5" />}
+              />
             </div>
           ))}
         </div>

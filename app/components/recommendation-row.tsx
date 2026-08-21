@@ -1,13 +1,14 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { Check, X } from "lucide-react";
 import {
   acceptRecommendationAction,
   dismissRecommendationAction,
 } from "@/app/actions/recommendations";
 import { BOOK_STATUSES, getStatusLabel, type BookFormat, type RecommendationStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Button, ErrorMessage, TextArea } from "./ui";
+import { Button, ErrorMessage, IconButton, TextArea } from "./ui";
 
 type Props = {
   mode: "received" | "sent";
@@ -128,13 +129,21 @@ export function RecommendationRow({
         <p className="text-xs text-zinc-400">{t("sentOn", { date: sentAt })}</p>
 
         {mode === "received" && status === "pending" ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="secondary" onClick={() => setOpen(true)}>
-              {t("accept")}
-            </Button>
-            <Button variant="ghost" onClick={() => setOpen("dismiss")}>
-              {t("dismiss")}
-            </Button>
+          <div className="flex items-center gap-1">
+            <IconButton
+              variant="secondary"
+              onClick={() => setOpen(true)}
+              aria-label={t("acceptAria")}
+              title={t("accept")}
+              icon={<Check className="h-5 w-5" />}
+            />
+            <IconButton
+              variant="ghost"
+              onClick={() => setOpen("dismiss")}
+              aria-label={t("dismissAria")}
+              title={t("dismiss")}
+              icon={<X className="h-5 w-5" />}
+            />
           </div>
         ) : null}
       </div>

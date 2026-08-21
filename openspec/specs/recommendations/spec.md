@@ -111,7 +111,7 @@ The system SHALL treat any received recommendation where `status = pending` as u
 - **AND** the unread badge on the `Recommendations` entry SHALL continue to display the same count
 
 ### Requirement: Accept a recommendation
-The system SHALL allow a signed-in receiver to accept a pending recommendation they received. Acceptance SHALL require the receiver to pick a status from `to-read`, `reading`, `read`, or `abandoned`. The system SHALL allow the receiver to attach an optional `reply` text message. On acceptance, the system SHALL create a new book on the receiver's shelf using the snapshotted title, author, formats, and note from the recommendation row, SHALL set the new book's status to the receiver's chosen status, SHALL set `dateAdded` to the current date, SHALL mark the recommendation `status = accepted` with `acceptedAt` set to the current timestamp, and SHALL store the reply (if any) along with `replyAt`. The new book SHALL have no `startedAt`, `finishedAt`, `abandonedAt`, or metadata. The acceptance action SHALL be performed by the receiver; no sender action SHALL trigger this behavior.
+The system SHALL allow a signed-in receiver to accept a pending recommendation they received. Acceptance SHALL require the receiver to pick a status from `to-read`, `reading`, `read`, or `abandoned`. The system SHALL allow the receiver to attach an optional `reply` text message. On acceptance, the system SHALL create a new book on the receiver's shelf using the snapshotted title, author, formats, and note from the recommendation row, SHALL set the new book's status to the receiver's chosen status, SHALL set `dateAdded` to the current date, SHALL mark the recommendation `status = accepted` with `acceptedAt` set to the current timestamp, and SHALL store the reply (if any) along with `replyAt`. The new book SHALL have no `startedAt`, `finishedAt`, `abandonedAt`, or metadata. The acceptance action SHALL be performed by the receiver; no sender action SHALL trigger this behavior. The trigger that opens the accept dialog on a recommendation row SHALL render as an icon-only button with a localized `aria-label`; the dialog's submit and cancel buttons SHALL remain visible text.
 
 #### Scenario: Accept with status selection
 - **WHEN** a receiver accepts a pending recommendation and selects status `to-read`
@@ -143,8 +143,13 @@ The system SHALL allow a signed-in receiver to accept a pending recommendation t
 - **THEN** the system SHALL still allow acceptance from the snapshotted fields
 - **AND** the new book is created on the receiver's shelf as if the receiver had copied it themselves
 
+#### Scenario: Accept trigger is icon-only
+- **WHEN** a pending recommendation row is rendered on `/recommendations`
+- **THEN** the action that opens the accept dialog is an icon-only button
+- **AND** the button has a localized `aria-label` in the active locale
+
 ### Requirement: Dismiss a recommendation
-The system SHALL allow a signed-in receiver to dismiss a pending recommendation they received. The system SHALL allow the receiver to attach an optional `reply` text message at the moment of dismissal. Dismissal SHALL set `status = dismissed` and `dismissedAt` to the current timestamp, and SHALL store the reply (if any) along with `replyAt`. Dismissal SHALL NOT create any book on the receiver's shelf. The dismissed row SHALL remain visible on `/recommendations` as a memory of what was sent and dismissed.
+The system SHALL allow a signed-in receiver to dismiss a pending recommendation they received. The system SHALL allow the receiver to attach an optional `reply` text message at the moment of dismissal. Dismissal SHALL set `status = dismissed` and `dismissedAt` to the current timestamp, and SHALL store the reply (if any) along with `replyAt`. Dismissal SHALL NOT create any book on the receiver's shelf. The dismissed row SHALL remain visible on `/recommendations` as a memory of what was sent and dismissed. The trigger that opens the dismiss dialog on a recommendation row SHALL render as an icon-only button with a localized `aria-label`; the dialog's submit and cancel buttons SHALL remain visible text.
 
 #### Scenario: Dismiss a pending recommendation
 - **WHEN** a receiver dismisses a pending recommendation
@@ -164,6 +169,11 @@ The system SHALL allow a signed-in receiver to dismiss a pending recommendation 
 - **WHEN** a receiver attempts to dismiss an already-accepted or already-dismissed recommendation
 - **THEN** the system SHALL NOT change the row's status
 - **AND** the system informs the receiver that no action is available
+
+#### Scenario: Dismiss trigger is icon-only
+- **WHEN** a pending recommendation row is rendered on `/recommendations`
+- **THEN** the action that opens the dismiss dialog is an icon-only button
+- **AND** the button has a localized `aria-label` in the active locale
 
 ### Requirement: Accepted and dismissed rows stay visible
 The system SHALL continue to display accepted and dismissed recommendations on `/recommendations` for both sender and receiver. The system MAY render accepted and dismissed rows in a less prominent position than pending rows. The system SHALL NOT auto-delete a recommendation row under any circumstance other than a future explicit removal capability.
@@ -207,15 +217,15 @@ The system SHALL NOT provide any action by which a sender can withdraw, rescind,
 - **AND** acceptance from the snapshotted fields SHALL remain possible for the receiver
 
 ### Requirement: Recommend from the owner's book list and book details
-The system SHALL provide a `Recommend` action on the owner's all-books view and on each status-filtered view, and SHALL also provide a `Recommend` action on the owner's book edit/detail view. Both `Recommend` actions SHALL open the same panel that lets the sender pick an accepted friend and write an optional message. The system SHALL NOT provide a `Recommend` action on a friend's view of someone else's shelf.
+The system SHALL provide a `Recommend` action on the owner's all-books view and on each status-filtered view, and SHALL also provide a `Recommend` action on the owner's book edit/detail view. Both `Recommend` actions SHALL open the same panel that lets the sender pick an accepted friend and write an optional message. The system SHALL NOT provide a `Recommend` action on a friend's view of someone else's shelf. The `Recommend` action on each owner-facing surface SHALL render as an icon-only button with a localized `aria-label`; the dialog's submit and cancel buttons SHALL remain visible text.
 
 #### Scenario: Recommend from the owner's book list
-- **WHEN** the owner clicks `Recommend` on a book card in their own shelf view
+- **WHEN** the owner activates the `Recommend` action on a book card in their own shelf view
 - **THEN** the system opens the recommendation panel
 - **AND** on submit the system sends a recommendation as defined by the send requirement
 
 #### Scenario: Recommend from the owner's book edit view
-- **WHEN** the owner clicks `Recommend` on their book edit/detail view
+- **WHEN** the owner activates the `Recommend` action on their book edit/detail view
 - **THEN** the system opens the recommendation panel
 - **AND** on submit the system sends a recommendation as defined by the send requirement
 

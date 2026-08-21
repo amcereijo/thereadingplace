@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { Upload } from "lucide-react";
 import { parseGoodreadsCsv, type ImportResult } from "@/lib/goodreads";
 import { importGoodreadsAction } from "@/app/actions/import";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
@@ -129,6 +130,9 @@ export function GoodreadsImporter({ onImportComplete, dictionary }: GoodreadsImp
           }`}
         >
           <div className="space-y-2">
+            {!isProcessing && (
+              <Upload className="mx-auto h-8 w-8 text-zinc-400" aria-hidden="true" />
+            )}
             <p className="text-sm text-zinc-600">
               {isProcessing
                 ? dictionary.import.dropzoneProcessing

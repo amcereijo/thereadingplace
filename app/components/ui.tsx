@@ -25,6 +25,24 @@ export function buttonClasses(
   );
 }
 
+export function iconButtonClasses(
+  variant: "primary" | "secondary" | "danger" | "ghost" = "secondary",
+  className?: string,
+) {
+  const variants = {
+    primary: "bg-teal-700 text-white hover:bg-teal-800 focus:ring-teal-600",
+    secondary: "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900",
+    danger: "bg-red-600 text-white hover:bg-red-700",
+    ghost: "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100",
+  };
+
+  return cn(
+    "inline-flex h-9 w-9 items-center justify-center rounded-lg transition focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50",
+    variants[variant],
+    className,
+  );
+}
+
 export function Button({
   type = "button",
   children,
@@ -47,6 +65,26 @@ export function Button({
   );
 }
 
+export function IconButton({
+  type = "button",
+  variant = "secondary",
+  className,
+  icon,
+  ...props
+}: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "aria-label" | "children"> & {
+  variant?: "primary" | "secondary" | "danger" | "ghost";
+  icon: ReactNode;
+  "aria-label": string;
+}) {
+  return (
+    <button type={type} className={iconButtonClasses(variant, className)} {...props}>
+      <span aria-hidden="true" className="inline-flex h-5 w-5 items-center justify-center">
+        {icon}
+      </span>
+    </button>
+  );
+}
+
 export function LinkButton({
   href,
   children,
@@ -61,6 +99,29 @@ export function LinkButton({
   return (
     <Link href={href} className={buttonClasses(variant, className)}>
       {children}
+    </Link>
+  );
+}
+
+export function IconLinkButton({
+  href,
+  variant = "secondary",
+  className,
+  icon,
+  ...props
+}: {
+  href: string;
+  variant?: "primary" | "secondary" | "danger" | "ghost";
+  className?: string;
+  icon: ReactNode;
+  "aria-label": string;
+  title?: string;
+}) {
+  return (
+    <Link href={href} className={iconButtonClasses(variant, className)} {...props}>
+      <span aria-hidden="true" className="inline-flex h-5 w-5 items-center justify-center">
+        {icon}
+      </span>
     </Link>
   );
 }

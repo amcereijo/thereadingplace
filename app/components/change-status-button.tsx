@@ -2,18 +2,20 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { RefreshCw } from "lucide-react";
 import { changeBookStatusAction } from "@/app/actions/books";
 import { BOOK_STATUSES, getStatusLabel, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Button, ErrorMessage } from "./ui";
+import { Button, ErrorMessage, IconButton } from "./ui";
 
 type Props = {
   bookId: string;
   currentStatus: BookStatus;
   dictionary: Dictionary;
+  ariaLabel?: string;
 };
 
-export function ChangeStatusButton({ bookId, currentStatus, dictionary }: Props) {
+export function ChangeStatusButton({ bookId, currentStatus, dictionary, ariaLabel }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(changeBookStatusAction, {
@@ -31,9 +33,19 @@ export function ChangeStatusButton({ bookId, currentStatus, dictionary }: Props)
 
   return (
     <div className="relative inline-block">
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        {dictionary.shelf.changeStatus}
-      </Button>
+      {ariaLabel ? (
+        <IconButton
+          variant="secondary"
+          onClick={() => setOpen(true)}
+          aria-label={ariaLabel}
+          title={dictionary.shelf.changeStatus}
+          icon={<RefreshCw className="h-5 w-5" />}
+        />
+      ) : (
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          {dictionary.shelf.changeStatus}
+        </Button>
+      )}
 
       {open ? (
         <div

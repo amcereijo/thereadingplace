@@ -62,7 +62,23 @@
     "save": "Save",
     "saving": "Saving…",
     "all": "All",
-    "more": "... and {count} more"
+    "more": "... and {count} more",
+    "editAria": "Edit book",
+    "deleteAria": "Delete book",
+    "detailsAria": "Show book details",
+    "showLessAria": "Show less",
+    "changeStatusAria": "Change status",
+    "recommendAria": "Recommend book to a friend",
+    "addToShelfAria": "Add to my shelf",
+    "statusAllAria": "All books",
+    "statusToReadAria": "To read, {count} book",
+    "statusToReadAria_plural": "To read, {count} books",
+    "statusReadingAria": "Reading, {count} book",
+    "statusReadingAria_plural": "Reading, {count} books",
+    "statusReadAria": "Read, {count} book",
+    "statusReadAria_plural": "Read, {count} books",
+    "statusAbandonedAria": "Abandoned, {count} book",
+    "statusAbandonedAria_plural": "Abandoned, {count} books"
   },
   "status": {
     "to-read": "To read",
@@ -89,7 +105,8 @@
     "cancel": "Cancel",
     "discardChanges": "Discard changes",
     "saveChanges": "Save changes",
-    "changesSaved": "Changes saved successfully!"
+    "changesSaved": "Changes saved successfully!",
+    "removeFieldAria": "Remove field"
   },
   "newBook": {
     "title": "Add a book",
@@ -112,6 +129,7 @@
     "noMatch": "No friends match \"{query}\".",
     "noneYet": "None yet. Send an invite to get started.",
     "viewShelf": "View shelf",
+    "viewShelfAria": "View @{username}'s shelf",
     "inviteByUsername": "Invite by username",
     "username": "Username",
     "usernamePlaceholder": "@friend",
@@ -213,10 +231,12 @@
     "cancel": "Cancel",
     "sent": "Recommendation sent.",
     "accept": "Accept",
+    "acceptAria": "Accept recommendation",
     "accepting": "Accepting…",
     "acceptTitle": "Accept recommendation",
     "acceptDescription": "Choose a status for this book on your shelf.",
     "dismiss": "Dismiss",
+    "dismissAria": "Dismiss recommendation",
     "dismissing": "Dismissing…",
     "dismissTitle": "Dismiss recommendation",
     "dismissDescription": "You can add an optional response for @{username}."

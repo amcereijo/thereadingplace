@@ -62,7 +62,23 @@
     "save": "Guardar",
     "saving": "Guardando…",
     "all": "Todos",
-    "more": "... y {count} más"
+    "more": "... y {count} más",
+    "editAria": "Editar libro",
+    "deleteAria": "Borrar libro",
+    "detailsAria": "Mostrar detalles del libro",
+    "showLessAria": "Mostrar menos",
+    "changeStatusAria": "Cambiar estado",
+    "recommendAria": "Recomendar libro a un amigo",
+    "addToShelfAria": "Añadir a mi estantería",
+    "statusAllAria": "Todos los libros",
+    "statusToReadAria": "Por leer, {count} libro",
+    "statusToReadAria_plural": "Por leer, {count} libros",
+    "statusReadingAria": "Leyendo, {count} libro",
+    "statusReadingAria_plural": "Leyendo, {count} libros",
+    "statusReadAria": "Leído, {count} libro",
+    "statusReadAria_plural": "Leído, {count} libros",
+    "statusAbandonedAria": "Abandonado, {count} libro",
+    "statusAbandonedAria_plural": "Abandonado, {count} libros"
   },
   "status": {
     "to-read": "Por leer",
@@ -89,7 +105,8 @@
     "cancel": "Cancelar",
     "discardChanges": "Descartar cambios",
     "saveChanges": "Guardar cambios",
-    "changesSaved": "¡Cambios guardados correctamente!"
+    "changesSaved": "¡Cambios guardados correctamente!",
+    "removeFieldAria": "Eliminar campo"
   },
   "newBook": {
     "title": "Añadir un libro",
@@ -112,6 +129,7 @@
     "noMatch": "Ningún amigo coincide con \"{query}\".",
     "noneYet": "Ninguno todavía. Envía una invitación para empezar.",
     "viewShelf": "Ver estantería",
+    "viewShelfAria": "Ver estantería de @{username}",
     "inviteByUsername": "Invitar por nombre de usuario",
     "username": "Nombre de usuario",
     "usernamePlaceholder": "@amigo",
@@ -213,10 +231,12 @@
     "cancel": "Cancelar",
     "sent": "Recomendación enviada.",
     "accept": "Aceptar",
+    "acceptAria": "Aceptar recomendación",
     "accepting": "Aceptando…",
     "acceptTitle": "Aceptar recomendación",
     "acceptDescription": "Elige un estado para este libro en tu estantería.",
     "dismiss": "Descartar",
+    "dismissAria": "Descartar recomendación",
     "dismissing": "Descartando…",
     "dismissTitle": "Descartar recomendación",
     "dismissDescription": "Puedes añadir una respuesta opcional para @{username}."
