@@ -4,18 +4,15 @@ import { LinkButton, PageTitle } from "@/app/components/ui";
 import { requireAppUser } from "@/lib/auth";
 import { countBooksByStatus, listBooks } from "@/lib/books";
 import { listAcceptedFriends } from "@/lib/friendships";
-import { countRecommendationsForUser, countUnreadReceived } from "@/lib/recommendations";
 import { getDictionaryForLocale } from "@/lib/i18n/server";
 
 export default async function ToReadPage() {
   const user = await requireAppUser();
   const { dictionary, t } = await getDictionaryForLocale();
-  const [books, counts, friends, recCount, unreadCount] = await Promise.all([
+  const [books, counts, friends] = await Promise.all([
     listBooks(user.id, "to-read"),
     countBooksByStatus(user.id),
     listAcceptedFriends(user.id),
-    countRecommendationsForUser(user.id),
-    countUnreadReceived(user.id),
   ]);
   return (
     <div>
@@ -28,8 +25,6 @@ export default async function ToReadPage() {
         current="to-read"
         counts={counts}
         dictionary={dictionary}
-        showRecommendations={recCount > 0}
-        recommendationsUnreadCount={unreadCount}
       />
       <BookList books={books} editable dictionary={dictionary} recommendFriends={friends} />
     </div>

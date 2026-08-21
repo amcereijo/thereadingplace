@@ -1,6 +1,5 @@
 import { PageSubtitle, PageTitle, SectionTitle, EmptyState } from "@/app/components/ui";
 import { RecommendationRow } from "@/app/components/recommendation-row";
-import { ShelfNav } from "@/app/components/shelf-nav";
 import { requireAppUser } from "@/lib/auth";
 import { listReceived, listSent } from "@/lib/recommendations";
 import { listUsernamesById } from "@/lib/users";
@@ -36,10 +35,6 @@ export default async function RecommendationsPage() {
     <div>
       <PageTitle>{t("title")}</PageTitle>
       <PageSubtitle>{t("subtitle")}</PageSubtitle>
-
-      <div className="mt-6">
-        <ShelfNav basePath="" current="recommendations" dictionary={dictionary} showRecommendations />
-      </div>
 
       <section className="mt-6 space-y-3">
         <SectionTitle>{t("received")}</SectionTitle>

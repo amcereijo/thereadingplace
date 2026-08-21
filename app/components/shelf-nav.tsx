@@ -6,12 +6,9 @@ import { cn } from "./ui";
 
 type Props = {
   basePath: string;
-  current?: BookStatus | "all" | "recommendations";
+  current?: BookStatus | "all";
   counts?: BookCounts;
   dictionary: Dictionary;
-  showRecommendations?: boolean;
-  recommendationsHref?: string;
-  recommendationsUnreadCount?: number;
 };
 
 export function ShelfNav({
@@ -19,9 +16,6 @@ export function ShelfNav({
   current = "all",
   counts,
   dictionary,
-  showRecommendations = false,
-  recommendationsHref = "/recommendations",
-  recommendationsUnreadCount,
 }: Props) {
   const items = [
     { href: basePath || "/", label: dictionary.shelf.all, key: "all" as const },
@@ -61,29 +55,6 @@ export function ShelfNav({
           </Link>
         );
       })}
-      {showRecommendations ? (
-        <Link
-          href={recommendationsHref}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium transition",
-            current === "recommendations"
-              ? "bg-teal-700 text-white"
-              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900",
-          )}
-        >
-          {dictionary.recommendations.title}
-          {recommendationsUnreadCount != null && recommendationsUnreadCount > 0 ? (
-            <span
-              className={cn(
-                "rounded-full px-1.5 py-0.5 text-xs leading-none font-semibold",
-                current === "recommendations" ? "bg-teal-600 text-teal-100" : "bg-teal-100 text-teal-800",
-              )}
-            >
-              {recommendationsUnreadCount}
-            </span>
-          ) : null}
-        </Link>
-      ) : null}
     </nav>
   );
 }
