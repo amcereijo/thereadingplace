@@ -59,18 +59,18 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
+      <body className="min-h-full flex flex-col overflow-x-clip bg-zinc-50 text-zinc-900">
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
             <NavHeader locale={locale} unreadRecommendations={unreadRecommendations} />
-            <div className="mx-auto flex w-full max-w-5xl flex-1">
+            <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-1">
               {userId ? (
                 <SideNavDesktop
                   dictionary={dictionary}
                   unreadRecommendations={unreadRecommendations}
                 />
               ) : null}
-              <main className="flex-1 px-4 py-8 sm:px-6">{children}</main>
+              <main className="min-w-0 flex-1 px-3 py-6 sm:px-6 sm:py-8">{children}</main>
             </div>
           </ClerkProvider>
         </LocaleProvider>

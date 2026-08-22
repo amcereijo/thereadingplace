@@ -110,15 +110,15 @@ export function BookList({
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-3">
-        <label htmlFor="sort" className="text-sm font-medium text-zinc-700">
+      <div className="mb-4 flex flex-wrap items-center gap-2 sm:gap-3">
+        <label htmlFor="sort" className="shrink-0 text-sm font-medium text-zinc-700">
           {dictionary.shelf.sort}
         </label>
         <select
           id="sort"
           value={sort}
           onChange={(e) => setSort(e.target.value as `${SortKey}-${SortDir}`)}
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
+          className="min-w-0 max-w-full flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600 sm:flex-none"
         >
           {sortOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -135,9 +135,9 @@ export function BookList({
             <li key={book.id}>
               <Card className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex-1">
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-base font-semibold text-zinc-900">
+                      <h2 className="min-w-0 text-base font-semibold text-zinc-900 break-words">
                         {book.title}
                         {book.author ? <span className="font-normal text-zinc-600"> {dictionary.shelf.by} {book.author}</span> : null}
                       </h2>
@@ -162,14 +162,14 @@ export function BookList({
                           {dictionary.shelf.notes}
                         </p>
                         <div
-                          className="whitespace-pre-wrap"
+                          className="whitespace-pre-wrap break-words"
                           dangerouslySetInnerHTML={{ __html: renderNoteHtml(book.note) }}
                         />
                       </div>
                     ) : null}
                   </div>
                   {editable ? (
-                    <div className="flex flex-row items-center gap-1">
+                    <div className="flex flex-row items-center gap-1 self-end sm:self-start">
                       <ChangeStatusButton
                         bookId={book.id}
                         currentStatus={book.status}
