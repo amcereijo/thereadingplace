@@ -5,7 +5,10 @@
   },
   "nav": {
     "shelf": "Estantería",
-    "friends": "Amigos"
+    "friends": "Amigos",
+    "menu": "Menú",
+    "menuOpen": "Abrir menú",
+    "menuClose": "Cerrar menú"
   },
   "locale": {
     "toggle": "Idioma",

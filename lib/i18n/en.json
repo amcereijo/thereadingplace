@@ -5,7 +5,10 @@
   },
   "nav": {
     "shelf": "Shelf",
-    "friends": "Friends"
+    "friends": "Friends",
+    "menu": "Menu",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
   },
   "locale": {
     "toggle": "Language",

@@ -4,8 +4,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
+import { auth } from "@clerk/nextjs/server";
+import { ensureUser } from "@/lib/users";
+import { countUnreadReceived } from "@/lib/recommendations";
 import { LocaleProvider } from "@/app/components/locale-provider";
-import { NavHeader, NavHeaderShell } from "@/app/components/nav-header";
+import { NavHeader } from "@/app/components/nav-header";
+import { SideNavDesktop } from "@/app/components/side-nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,16 +49,29 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const dictionary = getDictionary(locale);
+  const { userId } = await auth();
+  const unreadRecommendations = userId
+    ? await (async () => {
+        const { user } = await ensureUser(userId);
+        return countUnreadReceived(user.id);
+      })()
+    : 0;
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <NavHeaderShell>
-              <NavHeader locale={locale} />
-            </NavHeaderShell>
-            <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">{children}</main>
+            <NavHeader locale={locale} unreadRecommendations={unreadRecommendations} />
+            <div className="mx-auto flex w-full max-w-5xl flex-1">
+              {userId ? (
+                <SideNavDesktop
+                  dictionary={dictionary}
+                  unreadRecommendations={unreadRecommendations}
+                />
+              ) : null}
+              <main className="flex-1 px-4 py-8 sm:px-6">{children}</main>
+            </div>
           </ClerkProvider>
         </LocaleProvider>
       </body>
