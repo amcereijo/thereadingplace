@@ -13,9 +13,14 @@ const userButtonAppearance = {
 type NavHeaderProps = {
   locale: "en" | "es";
   unreadRecommendations: number;
+  incomingPendingRequests: number;
 };
 
-export async function NavHeader({ locale, unreadRecommendations }: NavHeaderProps) {
+export async function NavHeader({
+  locale,
+  unreadRecommendations,
+  incomingPendingRequests,
+}: NavHeaderProps) {
   const dictionary = getDictionary(locale);
 
   return (
@@ -23,7 +28,11 @@ export async function NavHeader({ locale, unreadRecommendations }: NavHeaderProp
       <div className="relative mx-auto flex h-14 max-w-5xl items-center gap-2 px-3 sm:gap-4 sm:px-6">
         <div className="flex shrink-0 items-center justify-start sm:w-56">
           <Show when="signed-in">
-            <SideNav dictionary={dictionary} unreadRecommendations={unreadRecommendations} />
+            <SideNav
+              dictionary={dictionary}
+              unreadRecommendations={unreadRecommendations}
+              incomingPendingRequests={incomingPendingRequests}
+            />
           </Show>
         </div>
         <Link

@@ -7,6 +7,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { auth } from "@clerk/nextjs/server";
 import { ensureUser } from "@/lib/users";
 import { countUnreadReceived } from "@/lib/recommendations";
+import { listIncomingPending } from "@/lib/friendships";
 import { LocaleProvider } from "@/app/components/locale-provider";
 import { NavHeader } from "@/app/components/nav-header";
 import { SideNavDesktop } from "@/app/components/side-nav";
@@ -50,24 +51,33 @@ export default async function RootLayout({
   const locale = await getLocale();
   const dictionary = getDictionary(locale);
   const { userId } = await auth();
-  const unreadRecommendations = userId
+  const { unreadRecommendations, incomingPendingRequests } = userId
     ? await (async () => {
         const { user } = await ensureUser(userId);
-        return countUnreadReceived(user.id);
+        const [unread, incoming] = await Promise.all([
+          countUnreadReceived(user.id),
+          listIncomingPending(user.id).then((rows) => rows.length),
+        ]);
+        return { unreadRecommendations: unread, incomingPendingRequests: incoming };
       })()
-    : 0;
+    : { unreadRecommendations: 0, incomingPendingRequests: 0 };
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col overflow-x-clip bg-zinc-50 text-zinc-900">
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <NavHeader locale={locale} unreadRecommendations={unreadRecommendations} />
+            <NavHeader
+              locale={locale}
+              unreadRecommendations={unreadRecommendations}
+              incomingPendingRequests={incomingPendingRequests}
+            />
             <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-1">
               {userId ? (
                 <SideNavDesktop
                   dictionary={dictionary}
                   unreadRecommendations={unreadRecommendations}
+                  incomingPendingRequests={incomingPendingRequests}
                 />
               ) : null}
               <main className="min-w-0 flex-1 px-3 py-6 sm:px-6 sm:py-8">{children}</main>

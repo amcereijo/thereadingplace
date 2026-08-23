@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { createT, type Dictionary } from "@/lib/i18n/dictionaries";
 import { cn } from "./ui";
 
 type SideNavProps = {
   dictionary: Dictionary;
   unreadRecommendations: number;
+  incomingPendingRequests: number;
 };
 
 type NavItem = {
@@ -16,13 +17,18 @@ type NavItem = {
   label: string;
   isActive: boolean;
   badge?: number | null;
+  badgeAria?: string;
 };
 
 function buildItems(
   pathname: string,
   dictionary: Dictionary,
   unreadRecommendations: number,
+  incomingPendingRequests: number,
 ): NavItem[] {
+  const t = createT(dictionary);
+  const showFriendsBadge =
+    incomingPendingRequests > 0 && !pathname.startsWith("/friends");
   return [
     {
       href: "/",
@@ -33,6 +39,10 @@ function buildItems(
       href: "/friends",
       label: dictionary.nav.friends,
       isActive: pathname.startsWith("/friends"),
+      badge: showFriendsBadge ? incomingPendingRequests : null,
+      badgeAria: showFriendsBadge
+        ? t("friends.pendingRequestsAria", { count: incomingPendingRequests })
+        : undefined,
     },
     {
       href: "/recommendations",
@@ -63,7 +73,10 @@ function NavLink({
     >
       <span className="min-w-0 flex-1 truncate">{item.label}</span>
       {item.badge ? (
-        <span className="shrink-0 rounded-full bg-teal-100 px-2 py-0.5 text-xs leading-none font-semibold text-teal-800">
+        <span
+          aria-label={item.badgeAria}
+          className="shrink-0 rounded-full bg-teal-100 px-2 py-0.5 text-xs leading-none font-semibold text-teal-800"
+        >
           {item.badge}
         </span>
       ) : null}
@@ -71,7 +84,11 @@ function NavLink({
   );
 }
 
-export function SideNav({ dictionary, unreadRecommendations }: SideNavProps) {
+export function SideNav({
+  dictionary,
+  unreadRecommendations,
+  incomingPendingRequests,
+}: SideNavProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -90,7 +107,12 @@ export function SideNav({ dictionary, unreadRecommendations }: SideNavProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const items = buildItems(pathname, dictionary, unreadRecommendations);
+  const items = buildItems(
+    pathname,
+    dictionary,
+    unreadRecommendations,
+    incomingPendingRequests,
+  );
 
   return (
     <>
@@ -166,9 +188,18 @@ export function SideNav({ dictionary, unreadRecommendations }: SideNavProps) {
   );
 }
 
-export function SideNavDesktop({ dictionary, unreadRecommendations }: SideNavProps) {
+export function SideNavDesktop({
+  dictionary,
+  unreadRecommendations,
+  incomingPendingRequests,
+}: SideNavProps) {
   const pathname = usePathname();
-  const items = buildItems(pathname, dictionary, unreadRecommendations);
+  const items = buildItems(
+    pathname,
+    dictionary,
+    unreadRecommendations,
+    incomingPendingRequests,
+  );
 
   return (
     <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 border-r border-zinc-200 bg-white/60 px-3 py-6 sm:block">

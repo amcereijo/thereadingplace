@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { Eye } from "lucide-react";
 import { type AppUser } from "@/lib/types";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Card, EmptyState, IconLinkButton, Input, SectionTitle } from "./ui";
+import { createT, type Dictionary } from "@/lib/i18n/dictionaries";
+import { EmptyState, IconLinkButton, Input } from "./ui";
 
 type Props = {
   friends: AppUser[];
@@ -13,10 +13,7 @@ type Props = {
 
 export function FriendsList({ friends, dictionary }: Props) {
   const [query, setQuery] = useState("");
-  const t = (key: string, params?: Record<string, string | number>) => {
-    const value = resolveKey(dictionary, key);
-    return value ? interpolate(value, params ?? {}) : key;
-  };
+  const t = createT(dictionary);
 
   const filtered = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
@@ -27,17 +24,20 @@ export function FriendsList({ friends, dictionary }: Props) {
   }, [friends, query]);
 
   return (
-    <section className="space-y-4">
-      <SectionTitle>{dictionary.friends.yourFriends}</SectionTitle>
-
+    <div className="space-y-3">
       {friends.length > 0 ? (
-        <div className="max-w-md">
-          <Input
-            type="search"
-            placeholder={dictionary.friends.findFriend}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+            {t("friends.friendsCount", { count: filtered.length })}
+          </p>
+          <div className="sm:max-w-xs sm:flex-1">
+            <Input
+              type="search"
+              placeholder={dictionary.friends.findFriend}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
         </div>
       ) : null}
 
@@ -48,48 +48,48 @@ export function FriendsList({ friends, dictionary }: Props) {
           <EmptyState>{dictionary.friends.noneYet}</EmptyState>
         )
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((friend) => (
-            <li key={friend.id}>
-              <Card className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-base font-bold text-teal-700">
-                    {(friend.username?.[0] ?? "?").toUpperCase()}
+        <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+          <table className="w-full text-sm">
+            <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              <tr>
+                <th scope="col" className="px-3 py-2 font-semibold">
+                  {dictionary.friends.friendsTableHeaderName}
+                </th>
+                <th scope="col" className="px-3 py-2 text-right font-semibold">
+                  <span className="sr-only">
+                    {dictionary.friends.friendsTableHeaderAction}
                   </span>
-                  <span className="truncate text-base font-semibold text-zinc-900">
-                    @{friend.username}
-                  </span>
-                </div>
-                <IconLinkButton
-                  variant="secondary"
-                  href={`/u/${friend.username}`}
-                  aria-label={t("friends.viewShelfAria", { username: friend.username ?? "" })}
-                  title={dictionary.friends.viewShelf}
-                  icon={<Eye className="h-5 w-5" />}
-                  className="self-end"
-                />
-              </Card>
-            </li>
-          ))}
-        </ul>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-200">
+              {filtered.map((friend) => (
+                <tr key={friend.id}>
+                  <td className="px-3 py-2">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-100 text-xs font-bold text-teal-700">
+                        {(friend.username?.[0] ?? "?").toUpperCase()}
+                      </span>
+                      <span className="truncate font-medium text-zinc-900">
+                        @{friend.username}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-right">
+                    <IconLinkButton
+                      variant="secondary"
+                      href={`/u/${friend.username}`}
+                      aria-label={t("friends.viewShelfAria", { username: friend.username ?? "" })}
+                      title={dictionary.friends.viewShelf}
+                      icon={<Eye className="h-4 w-4" />}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </section>
+    </div>
   );
-}
-
-function interpolate(value: string, params: Record<string, string | number>): string {
-  return value.replace(/\{(\w+)\}/g, (_, name) => String(params[name] ?? `{${name}}`));
-}
-
-function resolveKey(dict: Dictionary, key: string): string | undefined {
-  const parts = key.split(".");
-  let current: unknown = dict;
-  for (const part of parts) {
-    if (current && typeof current === "object" && part in current) {
-      current = (current as Record<string, unknown>)[part];
-    } else {
-      return undefined;
-    }
-  }
-  return typeof current === "string" ? current : undefined;
 }
