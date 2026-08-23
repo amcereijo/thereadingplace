@@ -1,13 +1,15 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import {
   acceptRecommendationAction,
   dismissRecommendationAction,
 } from "@/app/actions/recommendations";
 import { BOOK_STATUSES, getStatusLabel, type BookFormat, type RecommendationStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { formatBookDate } from "@/lib/i18n/format-date";
+import { useLocale } from "./locale-provider";
 import { Button, ErrorMessage, IconButton, TextArea } from "./ui";
 
 type Props = {
@@ -46,6 +48,7 @@ export function RecommendationRow({
   dictionary,
 }: Props) {
   const [open, setOpen] = useState<boolean | "dismiss">(false);
+  const [expanded, setExpanded] = useState(false);
   const [replyText, setReplyText] = useState("");
 
   const [acceptState, acceptAction, acceptPending] = useActionState(
@@ -88,62 +91,79 @@ export function RecommendationRow({
   };
 
   const statusLabel = resolveKey(dictionary, `recommendations.status.${status}`) ?? status;
+  const locale = useLocale();
+  const formattedSentAt = formatBookDate(sentAt, locale) ?? sentAt;
 
   return (
     <li className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className="text-base font-semibold text-zinc-900">
               {title}
               {author ? <span className="font-normal text-zinc-600"> {dictionary.shelf.by} {author}</span> : null}
             </h3>
-            {formats.length > 0 ? (
-              <p className="mt-1 text-xs text-zinc-500">{formats.join(" · ")}</p>
-            ) : null}
             <p className="mt-1 text-xs text-zinc-500">{counterpartyLabel}</p>
           </div>
-          <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLORS[status]}`}>
-            {statusLabel}
-          </span>
-        </div>
-
-        {message ? (
-          <div className="rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
-              {t("message")}
-            </p>
-            <p className="whitespace-pre-wrap">{message}</p>
-          </div>
-        ) : null}
-
-        {mode === "sent" && reply ? (
-          <div className="rounded-lg bg-teal-50 p-3 text-sm text-teal-900">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-teal-700">
-              {t("responseFrom", { username: replyFromUsername ?? "?" })}
-            </p>
-            <p className="whitespace-pre-wrap">{reply}</p>
-          </div>
-        ) : null}
-
-        <p className="text-xs text-zinc-400">{t("sentOn", { date: sentAt })}</p>
-
-        {mode === "received" && status === "pending" ? (
-          <div className="flex items-center gap-1">
-            <IconButton
-              variant="secondary"
-              onClick={() => setOpen(true)}
-              aria-label={t("acceptAria")}
-              title={t("accept")}
-              icon={<Check className="h-5 w-5" />}
-            />
+          <div className="flex items-center gap-2">
+            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLORS[status]}`}>
+              {statusLabel}
+            </span>
             <IconButton
               variant="ghost"
-              onClick={() => setOpen("dismiss")}
-              aria-label={t("dismissAria")}
-              title={t("dismiss")}
-              icon={<X className="h-5 w-5" />}
+              onClick={() => setExpanded((v) => !v)}
+              aria-label={expanded ? t("collapseAria") : t("expandAria")}
+              aria-expanded={expanded}
+              title={expanded ? t("collapse") : t("expand")}
+              icon={expanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
             />
+          </div>
+        </div>
+
+        {expanded ? (
+          <div className="flex flex-col gap-3">
+            {formats.length > 0 ? (
+              <p className="text-xs text-zinc-500">{formats.join(" · ")}</p>
+            ) : null}
+
+            {message ? (
+              <div className="rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
+                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  {t("message")}
+                </p>
+                <p className="whitespace-pre-wrap">{message}</p>
+              </div>
+            ) : null}
+
+            {mode === "sent" && reply ? (
+              <div className="rounded-lg bg-teal-50 p-3 text-sm text-teal-900">
+                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-teal-700">
+                  {t("responseFrom", { username: replyFromUsername ?? "?" })}
+                </p>
+                <p className="whitespace-pre-wrap">{reply}</p>
+              </div>
+            ) : null}
+
+            <p className="text-xs text-zinc-400">{t("sentOn", { date: formattedSentAt })}</p>
+
+            {mode === "received" && status === "pending" ? (
+              <div className="flex items-center gap-1">
+                <IconButton
+                  variant="secondary"
+                  onClick={() => setOpen(true)}
+                  aria-label={t("acceptAria")}
+                  title={t("accept")}
+                  icon={<Check className="h-5 w-5" />}
+                />
+                <IconButton
+                  variant="ghost"
+                  onClick={() => setOpen("dismiss")}
+                  aria-label={t("dismissAria")}
+                  title={t("dismiss")}
+                  icon={<X className="h-5 w-5" />}
+                />
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

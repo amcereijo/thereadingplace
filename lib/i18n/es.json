@@ -248,6 +248,10 @@
     "dismissAria": "Descartar recomendación",
     "dismissing": "Descartando…",
     "dismissTitle": "Descartar recomendación",
-    "dismissDescription": "Puedes añadir una respuesta opcional para @{username}."
+    "dismissDescription": "Puedes añadir una respuesta opcional para @{username}.",
+    "expand": "Ver detalles",
+    "expandAria": "Ver detalles de la recomendación",
+    "collapse": "Ocultar detalles",
+    "collapseAria": "Ocultar detalles de la recomendación"
   }
 }

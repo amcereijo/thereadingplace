@@ -248,6 +248,10 @@
     "dismissAria": "Dismiss recommendation",
     "dismissing": "Dismissing…",
     "dismissTitle": "Dismiss recommendation",
-    "dismissDescription": "You can add an optional response for @{username}."
+    "dismissDescription": "You can add an optional response for @{username}.",
+    "expand": "View details",
+    "expandAria": "View recommendation details",
+    "collapse": "Hide details",
+    "collapseAria": "Hide recommendation details"
   }
 }
