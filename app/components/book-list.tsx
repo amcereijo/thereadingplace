@@ -11,7 +11,7 @@ import type { Locale } from "@/lib/i18n/locales";
 import { AddToShelfButton } from "./add-to-shelf-button";
 import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
-import { Card, EmptyState, IconButton, IconLinkButton, StatusBadge } from "./ui";
+import { Card, EmptyState, IconButton, IconLinkButton, StatusBadge, cn } from "./ui";
 
 function DeleteBookSubmit({
   ariaLabel,
@@ -83,6 +83,66 @@ function renderNoteHtml(note: string): string {
   return escaped.replace(/\n/g, "<br/>");
 }
 
+function formatMetadataValue(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isCompactMetadataValue(value: string): boolean {
+  return value.length <= 48 && !value.includes("\n");
+}
+
+function MetadataValue({ value }: { value: string }) {
+  if (isHttpUrl(value)) {
+    return (
+      <a
+        href={value}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="break-all text-teal-700 underline-offset-2 hover:text-teal-800 hover:underline"
+      >
+        {value}
+      </a>
+    );
+  }
+  return <span className="whitespace-pre-wrap break-words">{value}</span>;
+}
+
+function lastMeaningfulDate(
+  book: BookRecord,
+  formatDate: (value: string | null | undefined) => string | null,
+  t: ReturnType<typeof createT>,
+): string | null {
+  const candidates: Array<{ value: string | null; key: "finishedOn" | "startedOn" | "abandonedOn" | "addedOn" }> = [
+    { value: book.finishedAt, key: "finishedOn" },
+    { value: book.startedAt, key: "startedOn" },
+    { value: book.abandonedAt, key: "abandonedOn" },
+    { value: book.dateAdded, key: "addedOn" },
+  ];
+  for (const candidate of candidates) {
+    const formatted = formatDate(candidate.value);
+    if (formatted) {
+      return t(`shelf.${candidate.key}`, { date: formatted });
+    }
+  }
+  return null;
+}
+
 export function BookList({
   books,
   editable = false,
@@ -131,42 +191,64 @@ export function BookList({
       <ul className="space-y-3">
         {sorted.map((book) => {
           const expanded = expandedId === book.id;
+          const lastDate = lastMeaningfulDate(book, formatDate, t);
           return (
             <li key={book.id}>
               <Card className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="min-w-0 text-base font-semibold text-zinc-900 break-words">
-                        {book.title}
-                        {book.author ? <span className="font-normal text-zinc-600"> {dictionary.shelf.by} {book.author}</span> : null}
-                      </h2>
-                      <StatusBadge status={book.status} dictionary={dictionary} />
-                    </div>
-                    {book.formats.length > 0 ? (
-                      <p className="mt-1 text-sm text-zinc-500">{book.formats.join(" · ")}</p>
-                    ) : null}
-                    <p className="mt-1 text-xs text-zinc-400">
-                      {[
-                        formatDate(book.dateAdded) && t("shelf.addedOn", { date: formatDate(book.dateAdded)! }),
-                        formatDate(book.startedAt) && t("shelf.startedOn", { date: formatDate(book.startedAt)! }),
-                        formatDate(book.finishedAt) && t("shelf.finishedOn", { date: formatDate(book.finishedAt)! }),
-                        formatDate(book.abandonedAt) && t("shelf.abandonedOn", { date: formatDate(book.abandonedAt)! }),
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                    {book.note && !expanded ? (
-                      <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
-                        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                          {dictionary.shelf.notes}
+                    <h2 className="min-w-0 text-base font-semibold text-zinc-900 break-words">
+                      {book.title}
+                      {book.author ? <span className="font-normal text-zinc-600"> {dictionary.shelf.by} {book.author}</span> : null}
+                    </h2>
+                    {editable ? (
+                      <>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                          <StatusBadge status={book.status} dictionary={dictionary} />
+                          {lastDate ? <p className="text-xs text-zinc-400">{lastDate}</p> : null}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedId(expanded ? null : book.id)}
+                          aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.seeMoreAria}
+                          aria-expanded={expanded}
+                          className="mt-2 inline-flex items-center gap-1 self-end text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded"
+                        >
+                          <span>{expanded ? dictionary.shelf.showLess : dictionary.shelf.seeMore}</span>
+                          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                          <StatusBadge status={book.status} dictionary={dictionary} />
+                        </div>
+                        {book.formats.length > 0 ? (
+                          <p className="mt-1 text-sm text-zinc-500">{book.formats.join(" · ")}</p>
+                        ) : null}
+                        <p className="mt-1 text-xs text-zinc-400">
+                          {[
+                            formatDate(book.dateAdded) && t("shelf.addedOn", { date: formatDate(book.dateAdded)! }),
+                            formatDate(book.startedAt) && t("shelf.startedOn", { date: formatDate(book.startedAt)! }),
+                            formatDate(book.finishedAt) && t("shelf.finishedOn", { date: formatDate(book.finishedAt)! }),
+                            formatDate(book.abandonedAt) && t("shelf.abandonedOn", { date: formatDate(book.abandonedAt)! }),
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </p>
-                        <div
-                          className="whitespace-pre-wrap break-words"
-                          dangerouslySetInnerHTML={{ __html: renderNoteHtml(book.note) }}
-                        />
-                      </div>
-                    ) : null}
+                        {book.note && !expanded ? (
+                          <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              {dictionary.shelf.notes}
+                            </p>
+                            <div
+                              className="whitespace-pre-wrap break-words"
+                              dangerouslySetInnerHTML={{ __html: renderNoteHtml(book.note) }}
+                            />
+                          </div>
+                        ) : null}
+                      </>
+                    )}
                   </div>
                   {editable ? (
                     <div className="flex flex-row items-center gap-1 self-end sm:self-start">
@@ -287,18 +369,35 @@ export function BookList({
                           <dt className="mb-2 inline-block rounded-md bg-teal-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
                             {dictionary.shelf.metadata}
                           </dt>
-                          <dd className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-                            <dl className="grid grid-cols-[minmax(0,auto),1fr] gap-x-4 gap-y-2 text-sm">
-                              {Object.entries(book.metadata).map(([key, value]) => (
-                                <div key={key} className="contents">
-                                  <dt className="truncate font-semibold text-zinc-700" title={key}>
-                                    {key}
-                                  </dt>
-                                  <dd className="break-words text-zinc-900">
-                                    {typeof value === "object" ? JSON.stringify(value) : String(value)}
-                                  </dd>
-                                </div>
-                              ))}
+                          <dd className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+                            <dl>
+                              {Object.entries(book.metadata).map(([key, rawValue], index) => {
+                                const value = formatMetadataValue(rawValue);
+                                const compact = isCompactMetadataValue(value);
+                                return (
+                                  <div
+                                    key={key}
+                                    className={cn(
+                                      "px-3 py-2.5",
+                                      index > 0 && "border-t border-zinc-100",
+                                      compact && "flex items-baseline gap-3",
+                                    )}
+                                  >
+                                    <dt
+                                      className={cn(
+                                        "text-xs font-semibold text-zinc-500",
+                                        compact ? "shrink-0" : "mb-1",
+                                      )}
+                                      title={key}
+                                    >
+                                      {key}
+                                    </dt>
+                                    <dd className="min-w-0 text-sm text-zinc-900">
+                                      <MetadataValue value={value} />
+                                    </dd>
+                                  </div>
+                                );
+                              })}
                             </dl>
                           </dd>
                         </div>
