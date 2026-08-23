@@ -74,15 +74,6 @@ function compareBooks(a: BookRecord, b: BookRecord, key: SortKey, dir: SortDir):
   return mul * aVal.localeCompare(bVal);
 }
 
-function renderNoteHtml(note: string): string {
-  const withBreaks = note.replace(/<br\s*\/?>/gi, "\n");
-  const escaped = withBreaks
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/\u003e/g, "&gt;");
-  return escaped.replace(/\n/g, "<br/>");
-}
-
 function formatMetadataValue(value: unknown): string {
   if (value == null) return "";
   if (typeof value === "string") return value;
@@ -222,31 +213,8 @@ export function BookList({
                       <>
                         <div className="mt-1 flex flex-wrap items-center gap-2">
                           <StatusBadge status={book.status} dictionary={dictionary} />
+                          {lastDate ? <p className="text-xs text-zinc-400">{lastDate}</p> : null}
                         </div>
-                        {book.formats.length > 0 ? (
-                          <p className="mt-1 text-sm text-zinc-500">{book.formats.join(" · ")}</p>
-                        ) : null}
-                        <p className="mt-1 text-xs text-zinc-400">
-                          {[
-                            formatDate(book.dateAdded) && t("shelf.addedOn", { date: formatDate(book.dateAdded)! }),
-                            formatDate(book.startedAt) && t("shelf.startedOn", { date: formatDate(book.startedAt)! }),
-                            formatDate(book.finishedAt) && t("shelf.finishedOn", { date: formatDate(book.finishedAt)! }),
-                            formatDate(book.abandonedAt) && t("shelf.abandonedOn", { date: formatDate(book.abandonedAt)! }),
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
-                        </p>
-                        {book.note && !expanded ? (
-                          <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700">
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                              {dictionary.shelf.notes}
-                            </p>
-                            <div
-                              className="whitespace-pre-wrap break-words"
-                              dangerouslySetInnerHTML={{ __html: renderNoteHtml(book.note) }}
-                            />
-                          </div>
-                        ) : null}
                       </>
                     )}
                   </div>
