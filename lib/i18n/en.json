@@ -124,6 +124,7 @@
     "placeholder": "Search by title…",
     "loading": "Searching…",
     "noResults": "No matches.",
+    "error": "Search unavailable. Try again.",
     "unknownAuthor": "Unknown author"
   },
   "editBook": {

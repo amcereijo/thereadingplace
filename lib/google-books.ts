@@ -2,7 +2,6 @@ import type { Locale } from "@/lib/i18n/locales";
 
 const GOOGLE_BOOKS_ENDPOINT = "https://www.googleapis.com/books/v1/volumes";
 const MAX_RESULTS = 10;
-const REVALIDATE_SECONDS = 3600;
 
 export type NormalizedVolume = {
   id: string;
@@ -44,10 +43,20 @@ type RawResponse = {
   items?: RawVolume[];
 };
 
+export class GoogleBooksError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "GoogleBooksError";
+    this.status = status;
+  }
+}
+
 export function searchVolumes(query: string, locale: Locale): Promise<SearchVolumesResult> {
   const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
   if (!apiKey) {
-    return Promise.reject(new Error("GOOGLE_BOOKS_API_KEY is not configured"));
+    return Promise.reject(new GoogleBooksError(500, "GOOGLE_BOOKS_API_KEY is not configured"));
   }
 
   const url = new URL(GOOGLE_BOOKS_ENDPOINT);
@@ -56,10 +65,13 @@ export function searchVolumes(query: string, locale: Locale): Promise<SearchVolu
   url.searchParams.set("maxResults", String(MAX_RESULTS));
   url.searchParams.set("key", apiKey);
 
-  return fetch(url.toString(), { next: { revalidate: REVALIDATE_SECONDS } }).then(
+  return fetch(url.toString(), { cache: "no-store" }).then(
     async (response) => {
       if (!response.ok) {
-        throw new Error(`Google Books request failed with status ${response.status}`);
+        throw new GoogleBooksError(
+          response.status,
+          `Google Books request failed with status ${response.status}`,
+        );
       }
       const body = (await response.json()) as RawResponse;
       const items = Array.isArray(body.items) ? body.items : [];

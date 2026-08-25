@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
   try {
     const { results } = await searchVolumes(query, locale);
     return Response.json({ results });
-  } catch {
-    return Response.json({ results: [] as NormalizedVolume[] });
+  } catch (error) {
+    console.error("Google Books search failed", error);
+    return Response.json(
+      { error: "upstream_unavailable" },
+      { status: 502 },
+    );
   }
 }

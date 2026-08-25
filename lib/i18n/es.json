@@ -124,6 +124,7 @@
     "placeholder": "Buscar por título…",
     "loading": "Buscando…",
     "noResults": "Sin coincidencias.",
+    "error": "Búsqueda no disponible. Intentá de nuevo.",
     "unknownAuthor": "Autor desconocido"
   },
   "editBook": {

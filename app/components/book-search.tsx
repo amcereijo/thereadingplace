@@ -16,6 +16,7 @@ type FetchState =
   | { kind: "loading" }
   | { kind: "results"; volumes: NormalizedVolume[] }
   | { kind: "empty" }
+  | { kind: "error" }
   | { kind: "hidden" };
 
 const MIN_QUERY_LENGTH = 2;
@@ -46,6 +47,10 @@ export function BookSearch({ locale, dictionary, onSelect }: Props) {
         { signal: controller.signal },
       )
         .then(async (res) => {
+          if (res.status === 502) {
+            setState({ kind: "error" });
+            return;
+          }
           if (!res.ok) {
             setState({ kind: "hidden" });
             return;
@@ -57,7 +62,7 @@ export function BookSearch({ locale, dictionary, onSelect }: Props) {
         })
         .catch((err: unknown) => {
           if (err instanceof DOMException && err.name === "AbortError") return;
-          setState({ kind: "hidden" });
+          setState({ kind: "error" });
         });
     }, DEBOUNCE_MS);
 
@@ -104,6 +109,7 @@ export function BookSearch({ locale, dictionary, onSelect }: Props) {
     if (state.kind === "loading") return true;
     if (state.kind === "results") return true;
     if (state.kind === "empty") return true;
+    if (state.kind === "error") return true;
     return false;
   }
 
@@ -144,6 +150,8 @@ export function BookSearch({ locale, dictionary, onSelect }: Props) {
             <li className="px-3 py-2 text-sm text-zinc-500">{t.loading}</li>
           ) : state.kind === "empty" ? (
             <li className="px-3 py-2 text-sm text-zinc-500">{t.noResults}</li>
+          ) : state.kind === "error" ? (
+            <li className="px-3 py-2 text-sm text-zinc-500">{t.error}</li>
           ) : state.kind === "results" ? (
             state.volumes.map((volume, i) => {
               const authorLine = volume.authors.length > 0 ? volume.authors.join(", ") : t.unknownAuthor;
