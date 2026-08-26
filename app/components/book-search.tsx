@@ -20,7 +20,7 @@ type FetchState =
   | { kind: "hidden" };
 
 const MIN_QUERY_LENGTH = 2;
-const DEBOUNCE_MS = 300;
+const DEBOUNCE_MS = 500;
 
 export function BookSearch({ locale, dictionary, onSelect }: Props) {
   const [query, setQuery] = useState("");
