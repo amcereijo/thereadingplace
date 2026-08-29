@@ -85,3 +85,43 @@ In the GitHub repository, go to **Settings → Secrets and variables → Actions
 #### 4. Verify the deployment
 
 Push to `main` or merge a pull request. The GitHub Actions workflow will run lint and type checks, apply database migrations, and deploy the app to Vercel production.
+
+## Operational scripts
+
+The project ships a few scripts under `scripts/` that talk to the production database directly. Run them with `npm run <script>` and the required env vars in scope.
+
+### `npm run db:migrate`
+
+Apply Drizzle migrations from `drizzle/` against the configured database (Turso in production, local SQLite in dev).
+
+```bash
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run db:migrate
+```
+
+### `npm run db:smoke`
+
+End-to-end smoke test against the configured database. Creates a couple of throwaway users, exercises book creation, status moves, friendship flows, and invite links, then cleans up. Use it after pulling new code locally to sanity-check the data layer.
+
+```bash
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run db:smoke
+```
+
+### `npm run db:backfill-covers`
+
+One-shot script that walks every `books` row without `metadata.coverUrl`, looks the title up on Google Books, and writes the first thumbnail back to `metadataJson`. Use it after enabling the cover-thumbnails feature to populate covers for books added before that release (and any book added without going through the typeahead).
+
+```bash
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... GOOGLE_BOOKS_API_KEY=... \
+  npm run db:backfill-covers
+```
+
+Notes:
+- Idempotent. Re-running is safe and never overwrites an existing `metadata.coverUrl`.
+- Sleeps between requests (default 1100 ms) to stay under Google Books' documented ~1 req/s rate limit. Tune with `--delay-ms` if your key has different quota.
+- On a daily-quota error the script retries a few times, then aborts with exit code 2 and a clear message. Remaining rows are left untouched for the next run.
+- Long titles are sanitized via `cleanBookQuery` in `lib/google-books.ts` before being sent, so Amazon-style edition suffixes like "(Spanish Edition)" do not trigger 503s.
+- For local development, load `.env.local` first to avoid passing env vars on every command:
+  ```bash
+  set -a; source .env.local; set +a
+  npm run db:backfill-covers
+  ```
