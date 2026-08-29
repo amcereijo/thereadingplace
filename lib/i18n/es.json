@@ -86,7 +86,9 @@
     "statusReadAria": "Leído, {count} libro",
     "statusReadAria_plural": "Leído, {count} libros",
     "statusAbandonedAria": "Abandonado, {count} libro",
-    "statusAbandonedAria_plural": "Abandonado, {count} libros"
+    "statusAbandonedAria_plural": "Abandonado, {count} libros",
+    "coverAlt": "Portada de {title}",
+    "coverPlaceholder": "Sin portada"
   },
   "status": {
     "to-read": "Por leer",

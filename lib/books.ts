@@ -1,4 +1,4 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { books } from "./db/schema";
 import {
@@ -105,6 +105,38 @@ export async function listBooks(ownerId: string, status?: BookStatus) {
 export async function getBook(id: string) {
   const [row] = await db.select().from(books).where(eq(books.id, id)).limit(1);
   return row ? toBook(row) : null;
+}
+
+function extractCoverUrl(metadataJson: string): string | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(metadataJson);
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+  const raw = (parsed as Record<string, unknown>).coverUrl;
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  return trimmed ? trimmed : null;
+}
+
+export async function listCoverUrlsByBookId(bookIds: string[]): Promise<Map<string, string>> {
+  const result = new Map<string, string>();
+  const unique = Array.from(new Set(bookIds.filter((id) => typeof id === "string" && id.length > 0)));
+  if (unique.length === 0) return result;
+
+  const rows = await db
+    .select({ id: books.id, metadataJson: books.metadataJson })
+    .from(books)
+    .where(inArray(books.id, unique));
+
+  for (const row of rows) {
+    const coverUrl = extractCoverUrl(row.metadataJson);
+    if (coverUrl) result.set(row.id, coverUrl);
+  }
+
+  return result;
 }
 
 export async function createBook(input: {

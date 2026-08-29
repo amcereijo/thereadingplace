@@ -1,6 +1,7 @@
 import { PageSubtitle, PageTitle, SectionTitle, EmptyState } from "@/app/components/ui";
 import { RecommendationRow } from "@/app/components/recommendation-row";
 import { requireAppUser } from "@/lib/auth";
+import { listCoverUrlsByBookId } from "@/lib/books";
 import { listReceived, listSent } from "@/lib/recommendations";
 import { listUsernamesById } from "@/lib/users";
 import { getDictionaryForLocale } from "@/lib/i18n/server";
@@ -20,6 +21,15 @@ export default async function RecommendationsPage() {
     ]),
   );
   const usernames = await listUsernamesById(allIds);
+
+  const bookIds = Array.from(
+    new Set(
+      [...received, ...sent]
+        .map((r) => r.bookId)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
+    ),
+  );
+  const coverUrls = await listCoverUrlsByBookId(bookIds);
 
   const t = (key: string, params?: Record<string, string | number>) => {
     const value = resolveKey(dictionary, `recommendations.${key}`);
@@ -50,6 +60,7 @@ export default async function RecommendationsPage() {
                 title={rec.title}
                 author={rec.author}
                 formats={rec.formats}
+                coverUrl={rec.bookId ? coverUrls.get(rec.bookId) ?? null : null}
                 counterpartyLabel={t("from", { username: usernames.get(rec.senderId) ?? "?" })}
                 replyFromUsername={null}
                 message={rec.message}
@@ -77,6 +88,7 @@ export default async function RecommendationsPage() {
                 title={rec.title}
                 author={rec.author}
                 formats={rec.formats}
+                coverUrl={rec.bookId ? coverUrls.get(rec.bookId) ?? null : null}
                 counterpartyLabel={t("to", { username: usernames.get(rec.receiverId) ?? "?" })}
                 replyFromUsername={usernames.get(rec.receiverId) ?? null}
                 message={rec.message}

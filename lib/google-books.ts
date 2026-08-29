@@ -60,7 +60,7 @@ export function searchVolumes(query: string, locale: Locale): Promise<SearchVolu
   }
 
   const url = new URL(GOOGLE_BOOKS_ENDPOINT);
-  url.searchParams.set("q", query);
+  url.searchParams.set("q", cleanBookQuery(query));
   url.searchParams.set("langRestrict", locale);
   url.searchParams.set("maxResults", String(MAX_RESULTS));
   url.searchParams.set("key", apiKey);
@@ -127,6 +127,30 @@ function normalizeVolume(item: RawVolume): NormalizedVolume | null {
 
 function isNormalized(volume: NormalizedVolume | null): volume is NormalizedVolume {
   return volume !== null;
+}
+
+const AMAZON_EDITION_SUFFIXES = [
+  /\s*\(Spanish Edition\)\s*$/i,
+  /\s*\(English Edition\)\s*$/i,
+  /\s*\(Kindle Edition\)\s*$/i,
+  /\s*\(Paperback\)\s*$/i,
+  /\s*\(Hardcover\)\s*$/i,
+  /\s*\(Audiobook\)\s*$/i,
+  /\s*\(Mass Market Paperback\)\s*$/i,
+];
+
+const MAX_QUERY_LENGTH = 80;
+
+export function cleanBookQuery(input: string): string {
+  let cleaned = input.trim();
+  for (const pattern of AMAZON_EDITION_SUFFIXES) {
+    cleaned = cleaned.replace(pattern, "");
+  }
+  cleaned = cleaned.replace(/\s+/g, " ").trim();
+  if (cleaned.length > MAX_QUERY_LENGTH) {
+    cleaned = cleaned.slice(0, MAX_QUERY_LENGTH).trim();
+  }
+  return cleaned;
 }
 
 export function toStoredMetadata(volume: NormalizedVolume): Record<string, unknown> {

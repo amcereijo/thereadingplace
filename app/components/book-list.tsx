@@ -9,6 +9,7 @@ import { type Dictionary, createT } from "@/lib/i18n/dictionaries";
 import { formatBookDate } from "@/lib/i18n/format-date";
 import type { Locale } from "@/lib/i18n/locales";
 import { AddToShelfButton } from "./add-to-shelf-button";
+import { BookCover } from "./book-cover";
 import { ChangeStatusButton } from "./change-status-button";
 import { RecommendPanel } from "./recommend-panel";
 import { Card, EmptyState, IconButton, IconLinkButton, StatusBadge, cn } from "./ui";
@@ -92,6 +93,13 @@ function isHttpUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+function coverUrlFromMetadata(metadata: Record<string, unknown>): string | null {
+  const raw = metadata.coverUrl;
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  return trimmed ? trimmed : null;
 }
 
 function isCompactMetadataValue(value: string): boolean {
@@ -187,6 +195,12 @@ export function BookList({
             <li key={book.id}>
               <Card className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <BookCover
+                    url={coverUrlFromMetadata(book.metadata)}
+                    bookTitle={book.title}
+                    dictionary={dictionary}
+                    className="self-start"
+                  />
                   <div className="min-w-0 flex-1">
                     <h2 className="min-w-0 text-base font-semibold text-zinc-900 break-words">
                       {book.title}

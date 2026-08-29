@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "npx tsx scripts/migrate.ts",
-    "db:smoke": "npx tsx scripts/smoke.ts"
+    "db:smoke": "npx tsx scripts/smoke.ts",
+    "db:backfill-covers": "npx tsx scripts/backfill-covers.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.6",
