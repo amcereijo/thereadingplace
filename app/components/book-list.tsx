@@ -211,28 +211,16 @@ export function BookList({
                         <StatusBadge status={book.status} dictionary={dictionary} />
                         {lastDate ? <p className="text-xs text-zinc-400">{lastDate}</p> : null}
                       </div>
-                      {editable ? (
-                        <button
-                          type="button"
-                          onClick={() => setExpandedId(expanded ? null : book.id)}
-                          aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.seeMoreAria}
-                          aria-expanded={expanded}
-                          className="mt-1 inline-flex items-center gap-1 self-start text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded sm:hidden"
-                        >
-                          <span>{expanded ? dictionary.shelf.showLess : dictionary.shelf.seeMore}</span>
-                          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                        </button>
-                      ) : null}
                     </div>
                   </div>
-                  <div className="flex flex-row items-center justify-between gap-2 sm:justify-end sm:gap-1">
+                  <div className="flex flex-row items-center justify-end gap-2 sm:gap-1">
                     {editable ? (
                       <button
                         type="button"
                         onClick={() => setExpandedId(expanded ? null : book.id)}
                         aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.seeMoreAria}
                         aria-expanded={expanded}
-                        className="hidden items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded sm:inline-flex"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded"
                       >
                         <span>{expanded ? dictionary.shelf.showLess : dictionary.shelf.seeMore}</span>
                         {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
