@@ -125,3 +125,28 @@ Notes:
   set -a; source .env.local; set +a
   npm run db:backfill-covers
   ```
+
+### `npm run db:backfill-metadata`
+
+One-shot script that fills missing `metadata.isbn` and `metadata.pageCount` values on the `books` table.
+
+ISBN is filled from `metadata.isbn13` / `metadata.isbn10` if already present locally; otherwise the script queries Google Books and takes the first ISBN from the result whose author matches the local author (case- and diacritic-insensitive prefix match, so `"Miguel Ángel Montero"` matches `"Miguel Ángel Montero García"`).
+
+pageCount is filled from the first Google Books result (after the same author-weighted ordering) that exposes a numeric `pageCount`.
+
+The Google Books query is just the title — author matching is done locally against the returned results, never sent. The title is sanitized via `shortTitleForQuery` in `scripts/backfill-metadata.ts`, which strips Amazon-style edition suffixes (`(Spanish Edition)`, `(Edición española)`, etc.) and truncates at `:` / `–` / `—` / `-`, so `"Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones"` becomes `"Atomic Habits"`.
+
+```bash
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... GOOGLE_BOOKS_API_KEY=... \
+  npm run db:backfill-metadata
+```
+
+Notes:
+- Idempotent. Re-running is safe and never overwrites an existing `metadata.isbn` or `metadata.pageCount`.
+- Targets the database configured via env vars: with `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` set it talks to Turso; otherwise it falls back to the local SQLite file at `data/app.db`.
+- Same delay / retry / abort behavior as `db:backfill-covers`. Tune with `--delay-ms` and `--max-retries`.
+- For local development, load `.env.local` first to avoid passing env vars on every command:
+  ```bash
+  set -a; source .env.local; set +a
+  npm run db:backfill-metadata
+  ```

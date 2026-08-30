@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "npx tsx scripts/migrate.ts",
     "db:smoke": "npx tsx scripts/smoke.ts",
-    "db:backfill-covers": "npx tsx scripts/backfill-covers.ts"
+    "db:backfill-covers": "npx tsx scripts/backfill-covers.ts",
+    "db:backfill-metadata": "npx tsx scripts/backfill-metadata.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.6",
