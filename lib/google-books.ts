@@ -80,6 +80,41 @@ export function searchVolumes(query: string, locale: Locale): Promise<SearchVolu
   );
 }
 
+/**
+ * Look up a single volume by ISBN using the Google Books `q=isbn:<value>`
+ * search syntax. Returns an empty result when nothing matches. Throws
+ * `GoogleBooksError` on transport / HTTP failures.
+ */
+export function searchByIsbn(isbn: string, locale: Locale): Promise<SearchVolumesResult> {
+  const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+  if (!apiKey) {
+    return Promise.reject(new GoogleBooksError(500, "GOOGLE_BOOKS_API_KEY is not configured"));
+  }
+
+  const cleaned = isbn.replace(/[\s-]/g, "");
+  if (!cleaned) return Promise.resolve({ results: [] });
+
+  const url = new URL(GOOGLE_BOOKS_ENDPOINT);
+  url.searchParams.set("q", `isbn:${cleaned}`);
+  url.searchParams.set("langRestrict", locale);
+  url.searchParams.set("maxResults", "1");
+  url.searchParams.set("key", apiKey);
+
+  return fetch(url.toString(), { cache: "no-store" }).then(
+    async (response) => {
+      if (!response.ok) {
+        throw new GoogleBooksError(
+          response.status,
+          `Google Books request failed with status ${response.status}`,
+        );
+      }
+      const body = (await response.json()) as RawResponse;
+      const items = Array.isArray(body.items) ? body.items : [];
+      return { results: items.map((item) => normalizeVolume(item)).filter(isNormalized) };
+    },
+  );
+}
+
 function normalizeVolume(item: RawVolume): NormalizedVolume | null {
   if (!item?.id || !item.volumeInfo) return null;
   const info = item.volumeInfo;
@@ -159,10 +194,16 @@ export function toStoredMetadata(volume: NormalizedVolume): Record<string, unkno
   const coverUrl = volume.imageLinks?.thumbnail ?? volume.imageLinks?.smallThumbnail ?? null;
   if (coverUrl) metadata.coverUrl = coverUrl;
 
+  let isbn10: string | null = null;
+  let isbn13: string | null = null;
   for (const identifier of volume.industryIdentifiers) {
-    if (identifier.type === "ISBN_10") metadata.isbn10 = identifier.identifier;
-    if (identifier.type === "ISBN_13") metadata.isbn13 = identifier.identifier;
+    if (identifier.type === "ISBN_10" && isbn10 === null) isbn10 = identifier.identifier;
+    if (identifier.type === "ISBN_13" && isbn13 === null) isbn13 = identifier.identifier;
   }
+  if (isbn10) metadata.isbn10 = isbn10;
+  if (isbn13) metadata.isbn13 = isbn13;
+  const primaryIsbn = isbn13 ?? isbn10;
+  if (primaryIsbn) metadata.isbn = primaryIsbn;
 
   if (volume.publisher) metadata.publisher = volume.publisher;
   if (typeof volume.pageCount === "number") metadata.pageCount = volume.pageCount;

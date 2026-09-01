@@ -106,47 +106,59 @@ End-to-end smoke test against the configured database. Creates a couple of throw
 TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run db:smoke
 ```
 
-### `npm run db:backfill-covers`
+### `npm run db:backfill-google-books`
 
-One-shot script that walks every `books` row without `metadata.coverUrl`, looks the title up on Google Books, and writes the first thumbnail back to `metadataJson`. Use it after enabling the cover-thumbnails feature to populate covers for books added before that release (and any book added without going through the typeahead).
+One-shot script that fills missing Google-Books-sourced metadata on the `books` table: `metadata.coverUrl`, `metadata.isbn10` / `metadata.isbn13` / `metadata.isbn`, and `metadata.pageCount`. Books that already have all three pieces are skipped entirely (no API call, no DB write).
+
+Per-book strategy:
+
+1. If the row already has any of `metadata.isbn`, `metadata.isbn13`, `metadata.isbn10` locally, the script first queries Google Books using the `q=isbn:<value>` search syntax via `searchByIsbn` in `lib/google-books.ts`. The first matching volume is then used to fill anything that's still missing.
+2. Otherwise (or when the ISBN lookup returns nothing), it falls back to a title-based search. The title is sanitized via `shortTitleForQuery` in `scripts/backfill-google-books.ts`, which strips Amazon-style edition suffixes (`(Spanish Edition)`, `(Edición española)`, etc.) and truncates at `:` / `–` / `—` / `-`, so `"Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones"` becomes `"Atomic Habits"`.
+3. Results are ordered by author match (case- and diacritic-insensitive prefix match, so `"Miguel Ángel Montero"` matches `"Miguel Ángel Montero García"`), so the first hit is the most likely edition. Author matching is done locally — never sent to Google Books.
 
 ```bash
 TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... GOOGLE_BOOKS_API_KEY=... \
-  npm run db:backfill-covers
+  npm run db:backfill-google-books
 ```
 
 Notes:
-- Idempotent. Re-running is safe and never overwrites an existing `metadata.coverUrl`.
-- Sleeps between requests (default 1100 ms) to stay under Google Books' documented ~1 req/s rate limit. Tune with `--delay-ms` if your key has different quota.
-- On a daily-quota error the script retries a few times, then aborts with exit code 2 and a clear message. Remaining rows are left untouched for the next run.
-- Long titles are sanitized via `cleanBookQuery` in `lib/google-books.ts` before being sent, so Amazon-style edition suffixes like "(Spanish Edition)" do not trigger 503s.
+- Idempotent. Re-running is safe and never overwrites an existing field.
+- At most one Google Books request per book (two only when the ISBN lookup misses and the script falls back to a title search).
+- Targets the database configured via env vars: with `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` set it talks to Turso; otherwise it falls back to the local SQLite file at `data/app.db`.
+- Sleeps between requests (default 1100 ms) to stay under Google Books' documented ~1 req/s rate limit. The same `--delay-ms` applies regardless of whether the call was an ISBN lookup or a title search. Tune it if your key has a different quota.
+- Logs mark which concept triggered each Google Books request with `[concept: isbn]` or `[concept: title]`, and each filled field is tagged with its source — e.g. `+ cover (api/isbn), isbn (api/isbn): "Title"` means both fields came from the ISBN lookup, while `+ pageCount (api/title)` means only the page count was filled from the title search. Books whose local ISBN was enough to satisfy the gap are logged as `+ isbn (local)`.
+- On a daily-quota error the script retries a few times with exponential backoff, then aborts with exit code 2 and a clear message. Remaining rows are left untouched for the next run.
+- Only touches `metadata_json` and `updated_at` on `books`.
 - For local development, load `.env.local` first to avoid passing env vars on every command:
   ```bash
   set -a; source .env.local; set +a
-  npm run db:backfill-covers
+  npm run db:backfill-google-books
   ```
 
-### `npm run db:backfill-metadata`
+### `npm run db:migrate-isbn`
 
-One-shot script that fills missing `metadata.isbn` and `metadata.pageCount` values on the `books` table.
+One-shot migration that normalizes the ISBN shape inside `metadata_json` on every `books` row so downstream consumers can rely on a single canonical layout:
 
-ISBN is filled from `metadata.isbn13` / `metadata.isbn10` if already present locally; otherwise the script queries Google Books and takes the first ISBN from the result whose author matches the local author (case- and diacritic-insensitive prefix match, so `"Miguel Ángel Montero"` matches `"Miguel Ángel Montero García"`).
+```json
+{ "isbn10": "...", "isbn13": "...", "isbn": "<isbn13 ó isbn10>" }
+```
 
-pageCount is filled from the first Google Books result (after the same author-weighted ordering) that exposes a numeric `pageCount`.
+`isbn10` and `isbn13` are kept as separate keys whenever Google Books (or the Goodreads CSV column "ISBN13") provides them. `isbn` is always derived — preferring ISBN-13, falling back to ISBN-10 — so existing readers that only look up `metadata.isbn` keep working regardless of which flavour was stored.
 
-The Google Books query is just the title — author matching is done locally against the returned results, never sent. The title is sanitized via `shortTitleForQuery` in `scripts/backfill-metadata.ts`, which strips Amazon-style edition suffixes (`(Spanish Edition)`, `(Edición española)`, etc.) and truncates at `:` / `–` / `—` / `-`, so `"Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones"` becomes `"Atomic Habits"`.
+The script is idempotent: re-running on an already-migrated database is a no-op.
 
 ```bash
-TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... GOOGLE_BOOKS_API_KEY=... \
-  npm run db:backfill-metadata
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run db:migrate-isbn
+# Review the impact first, no writes:
+TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run db:migrate-isbn -- --dry-run
 ```
 
 Notes:
-- Idempotent. Re-running is safe and never overwrites an existing `metadata.isbn` or `metadata.pageCount`.
-- Targets the database configured via env vars: with `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` set it talks to Turso; otherwise it falls back to the local SQLite file at `data/app.db`.
-- Same delay / retry / abort behavior as `db:backfill-covers`. Tune with `--delay-ms` and `--max-retries`.
+- Only touches `metadata_json` and `updated_at` on `books`.
+- Validates ISBN-10 and ISBN-13 checksums; malformed values are dropped and reclassified when possible (e.g. a generic `metadata.isbn` containing a valid ISBN-13 is moved to `metadata.isbn13`).
+- Run this once after pulling changes that introduced the canonical shape, so older rows written by Google Books or the Goodreads importer match what new writes produce.
 - For local development, load `.env.local` first to avoid passing env vars on every command:
   ```bash
   set -a; source .env.local; set +a
-  npm run db:backfill-metadata
+  npm run db:migrate-isbn
   ```

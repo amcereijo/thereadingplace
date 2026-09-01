@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { db } from "./db";
 import { books } from "./db/schema";
 import { type BookFormat, type BookStatus, isBookStatus } from "./types";
@@ -50,10 +50,13 @@ export async function findDuplicateByIsbn(
 ): Promise<boolean> {
   if (!isbn) return false;
 
+  const pattern = `%"isbn":"${isbn}"%`;
   const existing = await db
     .select({ id: books.id })
     .from(books)
-    .where(and(eq(books.ownerId, ownerId), eq(books.title, isbn)))
+    .where(
+      and(eq(books.ownerId, ownerId), like(books.metadataJson, pattern)),
+    )
     .limit(1);
 
   return existing.length > 0;
@@ -93,8 +96,9 @@ export async function importBooks(
 
   for (const book of parsedBooks) {
     try {
-      const isDuplicateByIsbn = book.isbn
-        ? await findDuplicateByIsbn(book.isbn, ownerId)
+      const lookupIsbn = book.isbn13 || book.isbn10;
+      const isDuplicateByIsbn = lookupIsbn
+        ? await findDuplicateByIsbn(lookupIsbn, ownerId)
         : false;
 
       if (isDuplicateByIsbn) {
@@ -128,8 +132,9 @@ export async function importBooks(
         .join("\n");
 
       const metadata: Record<string, unknown> = {
-        isbn: book.isbn,
+        isbn10: book.isbn10,
         isbn13: book.isbn13,
+        isbn: book.isbn13 || book.isbn10,
         rating: book.rating,
         publisher: book.publisher,
         binding: book.binding,

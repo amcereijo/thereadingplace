@@ -33,7 +33,7 @@ export interface ParsedBook {
   goodreadsId: string;
   title: string;
   author: string;
-  isbn: string;
+  isbn10: string;
   isbn13: string;
   rating: number | null;
   publisher: string;
@@ -146,7 +146,7 @@ function mapRowToBook(row: Record<string, string>): ParsedBook {
     goodreadsId: row[GOODREADS_COLUMNS.BOOK_ID]?.trim() || "",
     title,
     author,
-    isbn: cleanIsbn(row[GOODREADS_COLUMNS.ISBN]),
+    isbn10: cleanIsbn(row[GOODREADS_COLUMNS.ISBN]),
     isbn13: cleanIsbn(row[GOODREADS_COLUMNS.ISBN13]),
     rating: parseRating(row[GOODREADS_COLUMNS.MY_RATING]),
     publisher: row[GOODREADS_COLUMNS.PUBLISHER]?.trim() || "",
