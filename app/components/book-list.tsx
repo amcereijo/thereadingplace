@@ -220,7 +220,7 @@ export function BookList({
                         onClick={() => setExpandedId(expanded ? null : book.id)}
                         aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.seeMoreAria}
                         aria-expanded={expanded}
-                        className="inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded"
+                        className="mr-auto inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded sm:!hidden"
                       >
                         <span>{expanded ? dictionary.shelf.showLess : dictionary.shelf.seeMore}</span>
                         {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -276,6 +276,19 @@ export function BookList({
                     ) : null}
                   </div>
                 </div>
+
+                {editable ? (
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(expanded ? null : book.id)}
+                    aria-label={expanded ? dictionary.shelf.showLessAria : dictionary.shelf.seeMoreAria}
+                    aria-expanded={expanded}
+                    className="self-start !hidden items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 rounded sm:!inline-flex"
+                  >
+                    <span>{expanded ? dictionary.shelf.showLess : dictionary.shelf.seeMore}</span>
+                    {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </button>
+                ) : null}
 
                 {expanded ? (
                   <div className="border-t border-zinc-100 pt-4 text-sm">
