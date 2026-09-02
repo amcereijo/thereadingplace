@@ -271,5 +271,20 @@
     "expandAria": "Ver detalles de la recomendación",
     "collapse": "Ocultar detalles",
     "collapseAria": "Ocultar detalles de la recomendación"
+  },
+  "statistics": {
+    "title": "Estadísticas",
+    "subtitle": "Tu actividad de lectura de un vistazo.",
+    "period": "Periodo",
+    "year": "Año",
+    "month": "Mes",
+    "allMonths": "Todos los meses",
+    "booksFinished": "{count} libro terminado",
+    "booksFinished_plural": "{count} libros terminados",
+    "pagesRead": "{count} página leída",
+    "pagesRead_plural": "{count} páginas leídas",
+    "warningWithCount": "{count} de tus libros terminados en este periodo no tienen un número de páginas. Añádelo para un total más exacto.",
+    "warningWithCount_plural": "{count} de tus libros terminados en este periodo no tienen un número de páginas. Añádelo para un total más exacto.",
+    "empty": "Aún no has terminado libros en este periodo."
   }
 }

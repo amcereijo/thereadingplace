@@ -36,6 +36,11 @@ function buildItems(
       isActive: pathname === "/",
     },
     {
+      href: "/stats",
+      label: dictionary.statistics.title,
+      isActive: pathname.startsWith("/stats"),
+    },
+    {
       href: "/friends",
       label: dictionary.nav.friends,
       isActive: pathname.startsWith("/friends"),

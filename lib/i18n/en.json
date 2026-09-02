@@ -271,5 +271,20 @@
     "expandAria": "View recommendation details",
     "collapse": "Hide details",
     "collapseAria": "Hide recommendation details"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "subtitle": "Reading insights for your shelf.",
+    "period": "Period",
+    "year": "Year",
+    "month": "Month",
+    "allMonths": "All months",
+    "booksFinished": "{count} book finished",
+    "booksFinished_plural": "{count} books finished",
+    "pagesRead": "{count} page read",
+    "pagesRead_plural": "{count} pages read",
+    "warningWithCount": "{count} of your finished books in this period don't have a page count. Add them for a more accurate total.",
+    "warningWithCount_plural": "{count} of your finished books in this period don't have a page count. Add them for a more accurate total.",
+    "empty": "No books finished in this period yet."
   }
 }
