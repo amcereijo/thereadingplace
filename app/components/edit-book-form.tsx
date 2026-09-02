@@ -25,13 +25,23 @@ type MetaEntry = { key: string; value: string };
 function entriesFromRecord(rec: Record<string, unknown>): MetaEntry[] {
   return Object.entries(rec)
     .filter(([k]) => k !== "")
-    .map(([k, v]) => ({ key: k, value: String(v ?? "") }));
+    .map(([k, v]) => ({ key: k, value: v == null ? "" : String(v) }));
+}
+
+function coerceValue(raw: string): unknown {
+  if (raw === "") return raw;
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  if (raw === "null") return null;
+  if (/^-?\d+$/.test(raw)) return Number.parseInt(raw, 10);
+  if (/^-?\d+\.\d+$/.test(raw)) return Number.parseFloat(raw);
+  return raw;
 }
 
 function recordFromEntries(entries: MetaEntry[]): Record<string, unknown> {
   const rec: Record<string, unknown> = {};
   for (const { key, value } of entries) {
-    if (key.trim() !== "") rec[key] = value;
+    if (key.trim() !== "") rec[key] = coerceValue(value);
   }
   return rec;
 }
