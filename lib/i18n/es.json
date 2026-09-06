@@ -129,6 +129,23 @@
     "error": "Búsqueda no disponible. Intentá de nuevo.",
     "unknownAuthor": "Autor desconocido"
   },
+  "barcodeScanner": {
+    "button": "Escanear código de barras",
+    "overlayTitle": "Escanea el código de barras del libro",
+    "cancel": "Cancelar",
+    "scanHint": "Apunta la cámara al código de barras en la contraportada del libro.",
+    "lookingUp": "Buscando el libro…",
+    "permissionDenied": "El acceso a la cámara está bloqueado. Puedes permitirlo en los ajustes del navegador o escribir el ISBN.",
+    "cameraUnavailable": "Este dispositivo no tiene cámara disponible. Escribe el ISBN.",
+    "manualLabel": "ISBN",
+    "manualPlaceholder": "978…",
+    "manualSubmit": "Buscar",
+    "notFound": "No se encontró ningún libro para ese código.",
+    "error": "Búsqueda no disponible. Intentá de nuevo.",
+    "useThisBook": "Usar este libro",
+    "scanAgain": "Escanear de nuevo",
+    "unknownAuthor": "Autor desconocido"
+  },
   "editBook": {
     "title": "Editar libro"
   },

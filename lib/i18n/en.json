@@ -129,6 +129,23 @@
     "error": "Search unavailable. Try again.",
     "unknownAuthor": "Unknown author"
   },
+  "barcodeScanner": {
+    "button": "Scan barcode",
+    "overlayTitle": "Scan the book's barcode",
+    "cancel": "Cancel",
+    "scanHint": "Point the camera at the barcode on the back of the book.",
+    "lookingUp": "Looking up the book…",
+    "permissionDenied": "Camera access is blocked. You can allow it in your browser settings, or type the ISBN instead.",
+    "cameraUnavailable": "No camera is available on this device. Type the ISBN instead.",
+    "manualLabel": "ISBN",
+    "manualPlaceholder": "978…",
+    "manualSubmit": "Look up",
+    "notFound": "No book found for that code.",
+    "error": "Lookup unavailable. Try again.",
+    "useThisBook": "Use this book",
+    "scanAgain": "Scan again",
+    "unknownAuthor": "Unknown author"
+  },
   "editBook": {
     "title": "Edit book"
   },

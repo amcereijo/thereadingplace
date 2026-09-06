@@ -8,6 +8,7 @@ import type { NormalizedVolume } from "@/lib/google-books";
 import { toStoredMetadata } from "@/lib/google-books";
 import { BookForm } from "./book-form";
 import { BookSearch } from "./book-search";
+import { BarcodeScannerButton } from "./barcode-scanner";
 
 export function CreateBookForm({ dictionary, locale }: { dictionary: Dictionary; locale: Locale }) {
   const [state, action] = useActionState(createBookAction, { error: null as string | null });
@@ -24,6 +25,7 @@ export function CreateBookForm({ dictionary, locale }: { dictionary: Dictionary;
   return (
     <div className="space-y-6">
       <BookSearch locale={locale} dictionary={dictionary} onSelect={handleSelect} />
+      <BarcodeScannerButton locale={locale} dictionary={dictionary} onSelect={handleSelect} />
       <BookForm
         action={action}
         error={state?.error ? translateError(dictionary, state.error) : null}
