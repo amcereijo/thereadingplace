@@ -13,6 +13,7 @@ export function BookCover({
   className,
   width = 48,
   height = 64,
+  fill = false,
 }: {
   url: string | null | undefined;
   bookTitle: string;
@@ -20,6 +21,7 @@ export function BookCover({
   className?: string;
   width?: number;
   height?: number;
+  fill?: boolean;
 }) {
   const [errored, setErrored] = useState(false);
   const safeUrl = normalizeCoverUrl(url);
@@ -31,9 +33,10 @@ export function BookCover({
     <div
       className={cn(
         "relative shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-100",
+        fill ? "aspect-[2/3] w-full" : null,
         className,
       )}
-      style={{ width, height }}
+      style={fill ? undefined : { width, height }}
     >
       {showImage ? (
         <Image

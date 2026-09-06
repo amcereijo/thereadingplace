@@ -88,7 +88,9 @@
     "statusAbandonedAria": "Abandoned, {count} book",
     "statusAbandonedAria_plural": "Abandoned, {count} books",
     "coverAlt": "Cover of {title}",
-    "coverPlaceholder": "No cover"
+    "coverPlaceholder": "No cover",
+    "viewGridAria": "Switch to grid view",
+    "viewListAria": "Switch to list view"
   },
   "status": {
     "to-read": "To read",
