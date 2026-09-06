@@ -5,19 +5,23 @@ Lets a signed-in user see book dates in a visual format that matches the active 
 ## Requirements
 
 ### Requirement: Per-locale display format
-The system SHALL render stored ISO `YYYY-MM-DD` book dates as `YYYY-MM-DD` in English and as `dd/mm/yyyy` in Spanish.
+The system SHALL render stored ISO `YYYY-MM-DD` book dates as `mm/dd/yyyy` in English and as `dd/mm/yyyy` in Spanish, both with `/` as the separator.
 
 #### Scenario: Spanish locale shows slashed format
 - **WHEN** a Spanish-locale reader views a book date in a card, list, or recommendation row
 - **THEN** the system renders the date as `dd/mm/yyyy` with `/` as the separator
 
-#### Scenario: English locale is unchanged
+#### Scenario: English locale uses month/day/year
 - **WHEN** an English-locale reader views the same date
-- **THEN** the system continues to render it as `YYYY-MM-DD`
+- **THEN** the system renders it as `mm/dd/yyyy` (e.g. `08/13/2026`)
 
 #### Scenario: Stored values remain ISO
 - **WHEN** the helper renders a date
 - **THEN** no stored value is modified; only the rendered output changes
+
+#### Scenario: English date picker agrees with English text
+- **WHEN** an English-locale reader on a browser with the `en-US` picker default opens the book edit form
+- **THEN** each `<input type="date">` renders its existing value in `mm/dd/yyyy` order, matching the text rendered elsewhere
 
 ### Requirement: Date inputs reflect the active locale
 The system SHALL set the `lang` attribute on every book-form `<input type="date">` to the active in-app locale so the browser's date picker renders in that locale's convention.

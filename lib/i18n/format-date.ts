@@ -5,11 +5,13 @@ const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 /**
  * Format an ISO `YYYY-MM-DD` book date for display.
  *
- * - English locale: `YYYY-MM-DD` (ISO; same shape browsers expect on a
- *   `<input type="date">` value, so re-editing feels consistent).
- * - Spanish locale: `dd/mm/yyyy` with slashes, matching the locale-default
- *   the browser already renders for an `<input type="date">` so the visible
- *   dates are uniform across the form and the rest of the UI.
+ * - English locale: `mm/dd/yyyy` with slashes — matches the `en-US` browser
+ *   locale that <input type="date"> pickers default to, so the value shown
+ *   in a card matches the value shown in the form input.
+ * - Spanish locale: `dd/mm/yyyy` with slashes — matches the picker default
+ *   for `es` browsers.
+ *
+ * The stored value remains ISO; only the rendered text is reformatted.
  */
 export function formatBookDate(value: string | null | undefined, locale: Locale): string | null {
   if (!value) return null;
@@ -19,5 +21,5 @@ export function formatBookDate(value: string | null | undefined, locale: Locale)
   if (locale === "es") {
     return `${day}/${month}/${year}`;
   }
-  return `${year}-${month}-${day}`;
+  return `${month}/${day}/${year}`;
 }
