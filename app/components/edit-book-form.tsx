@@ -163,7 +163,8 @@ export function EditBookForm({
   }
 
   return (
-    <form action={action} className="max-w-xl space-y-5">
+    <>
+      <form action={action} className="max-w-xl space-y-5">
       <input type="hidden" name="id" value={book.id} />
       <input type="hidden" name="formats" value={formats.join(",")} />
       <input type="hidden" name="dateAdded" value={dateAdded} />
@@ -311,12 +312,13 @@ export function EditBookForm({
         ) : null}
         {state?.success && <SuccessMessage>{dictionary.bookForm.changesSaved}</SuccessMessage>}
       </div>
-
-      <form action={deleteBookAction} className="border-t border-zinc-200 pt-5">
-        <input type="hidden" name="id" value={book.id} />
-        <DeleteSubmit dictionary={dictionary} />
-      </form>
     </form>
+
+    <form action={deleteBookAction} className="mt-5 border-t border-zinc-200 pt-5">
+      <input type="hidden" name="id" value={book.id} />
+      <DeleteSubmit dictionary={dictionary} />
+    </form>
+    </>
   );
 }
 
