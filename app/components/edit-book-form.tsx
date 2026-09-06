@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { updateBookAction } from "@/app/actions/books";
 import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type AppUser, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/locales";
 import { Button, ErrorMessage, IconButton, Input, Label, Select, SuccessMessage, TextArea } from "./ui";
 import { RecommendPanel } from "./recommend-panel";
 import { deleteBookAction } from "@/app/actions/books";
@@ -76,10 +77,12 @@ function computeDatesOnStatusChange(
 export function EditBookForm({
   book,
   dictionary,
+  locale,
   recommendFriends,
 }: {
   book: BookRecord;
   dictionary: Dictionary;
+  locale: Locale;
   recommendFriends?: AppUser[];
 }) {
   const router = useRouter();
@@ -210,19 +213,19 @@ export function EditBookForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="dateAdded" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.added}</label>
-            <Input id="dateAdded" type="date" name="dateAdded" value={dateAdded} onChange={(e) => setDateAdded(e.target.value)} className="flex-1" />
+            <Input id="dateAdded" type="date" name="dateAdded" value={dateAdded} onChange={(e) => setDateAdded(e.target.value)} className="flex-1" lang={locale} />
           </div>
           <div className="flex items-center gap-3">
             <label htmlFor="startedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.started}</label>
-            <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} className="flex-1" />
+            <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} className="flex-1" lang={locale} />
           </div>
           <div className="flex items-center gap-3">
             <label htmlFor="finishedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.finished}</label>
-            <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} className="flex-1" />
+            <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} className="flex-1" lang={locale} />
           </div>
           <div className="flex items-center gap-3">
             <label htmlFor="abandonedAt" className="w-24 shrink-0 text-sm font-medium text-zinc-700">{dictionary.bookForm.abandoned}</label>
-            <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} className="flex-1" />
+            <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} className="flex-1" lang={locale} />
           </div>
         </div>
       </fieldset>

@@ -11,7 +11,7 @@ export default async function EditBookPage({ params }: { params: Promise<{ id: s
   const user = await requireAppUser();
   const { id } = await params;
   const [book, friends] = await Promise.all([getBook(id), listAcceptedFriends(user.id)]);
-  const { dictionary, t } = await getDictionaryForLocale();
+  const { dictionary, locale, t } = await getDictionaryForLocale();
   if (!book || book.ownerId !== user.id) notFound();
 
   return (
@@ -20,7 +20,7 @@ export default async function EditBookPage({ params }: { params: Promise<{ id: s
         <BackButton />
         <PageTitle>{t("editBook.title")}</PageTitle>
       </div>
-      <EditBookForm book={book} dictionary={dictionary} recommendFriends={friends} />
+      <EditBookForm book={book} dictionary={dictionary} locale={locale} recommendFriends={friends} />
     </div>
   );
 }

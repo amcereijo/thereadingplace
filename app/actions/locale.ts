@@ -16,12 +16,10 @@ export async function setLocale(locale: Locale) {
     maxAge: 60 * 60 * 24 * 365,
   });
 
-  revalidatePath("/");
-  revalidatePath("/to-read");
-  revalidatePath("/reading");
-  revalidatePath("/read");
-  revalidatePath("/abandoned");
-  revalidatePath("/friends");
-  revalidatePath("/books/new");
-  revalidatePath("/books/import");
+  // Re-render the entire layout so <html lang> flips on every page, which in
+  // turn drives the format of <input type="date"> pickers and the locale-aware
+  // text rendered by formatBookDate helpers. Previously only a hard-coded list of
+  // shelf paths was invalidated, leaving routes like /stats stuck on the old
+  // locale's date format until the next navigation.
+  revalidatePath("/", "layout");
 }

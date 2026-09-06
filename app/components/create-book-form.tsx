@@ -32,6 +32,7 @@ export function CreateBookForm({ dictionary, locale }: { dictionary: Dictionary;
         submitLabel={dictionary.shelf.addBook}
         cancelHref="/"
         dictionary={dictionary}
+        locale={locale}
         titleValue={title}
         onTitleChange={setTitle}
         authorValue={author}

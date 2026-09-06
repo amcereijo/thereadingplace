@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { BOOK_FORMATS, BOOK_STATUSES, getStatusLabel, type BookFormat, type BookRecord, type BookStatus } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/locales";
 import { Button, ErrorMessage, Input, Label, LinkButton, Select, TextArea } from "./ui";
 
 function SubmitButton({ label, savingLabel }: { label: string; savingLabel: string }) {
@@ -22,6 +23,7 @@ type Props = {
   submitLabel: string;
   cancelHref?: string;
   dictionary: Dictionary;
+  locale: Locale;
   titleValue?: string;
   onTitleChange?: (value: string) => void;
   authorValue?: string;
@@ -53,6 +55,7 @@ export function BookForm({
   submitLabel,
   cancelHref,
   dictionary,
+  locale,
   titleValue,
   onTitleChange,
   authorValue,
@@ -155,15 +158,15 @@ export function BookForm({
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
           <Label htmlFor="startedAt">{dictionary.bookForm.started}</Label>
-          <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} />
+          <Input id="startedAt" type="date" name="startedAt" value={startedAt} onChange={(e) => setStartedAt(e.target.value)} lang={locale} />
         </div>
         <div>
           <Label htmlFor="finishedAt">{dictionary.bookForm.finished}</Label>
-          <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} />
+          <Input id="finishedAt" type="date" name="finishedAt" value={finishedAt} onChange={(e) => setFinishedAt(e.target.value)} lang={locale} />
         </div>
         <div>
           <Label htmlFor="abandonedAt">{dictionary.bookForm.abandoned}</Label>
-          <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} />
+          <Input id="abandonedAt" type="date" name="abandonedAt" value={abandonedAt} onChange={(e) => setAbandonedAt(e.target.value)} lang={locale} />
         </div>
       </div>
 
